@@ -1,0 +1,894 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>École REKARBON · Français / Lingála</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Maquette navigable de l'école des métiers du carbone. Palette « sol et charbon » : fond argile clair, vert forêt profond, biochar, cuivre du four. Cases pointillées = où chaque donnée sera stockée. */
+:root{
+  --clay:#F3F0E8; --surface:#FFFFFF; --ink:#1B2420; --muted:#5F6B64; --line:#DCD9CE;
+  --forest:#1F4D3A; --forest-ink:#FFFFFF; --leaf:#CFE3D4; --copper:#B5652B; --char:#121815;
+  --on-char:#EEF2EC; --on-char-muted:#A9B6AE; --ok:#2E7A4F; --warn:#A86414; --db:#2F5D8C; --db-bg:#EAF1F8;
+  --display:"Fraunces",Georgia,serif; --body:"Public Sans","Segoe UI",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --r-s:6px; --r-m:12px; --r-pill:999px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --clay:#101512; --surface:#18201C; --ink:#E9EEE9; --muted:#9FAEA5; --line:#2C3832;
+    --forest:#7FC39C; --forest-ink:#0E1A13; --leaf:#22392C; --copper:#E0935A; --char:#0A0E0C;
+    --on-char:#EEF2EC; --on-char-muted:#A9B6AE; --ok:#79C99A; --warn:#E3A452; --db:#8DB8E4; --db-bg:#16222F; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --clay:#101512; --surface:#18201C; --ink:#E9EEE9; --muted:#9FAEA5; --line:#2C3832;
+  --forest:#7FC39C; --forest-ink:#0E1A13; --leaf:#22392C; --copper:#E0935A; --char:#0A0E0C;
+  --on-char:#EEF2EC; --on-char-muted:#A9B6AE; --ok:#79C99A; --warn:#E3A452; --db:#8DB8E4; --db-bg:#16222F; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--clay);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--char)}
+.wrap{max-width:1220px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.12;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,4vw,3rem)} h2{font-size:clamp(1.4rem,2.6vw,1.95rem)} h3{font-size:1.18rem}
+p{margin:0} a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--copper);outline-offset:3px}
+.muted{color:var(--muted)} .num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono);font-size:.84rem}
+.stack{display:grid;gap:14px} .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.kicker{font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--copper)}
+
+.mock{position:sticky;top:env(safe-area-inset-top,0px);z-index:55;background:var(--char);color:var(--on-char);font-size:.84rem}
+.mock .wrap{display:flex;gap:10px 16px;align-items:center;flex-wrap:wrap;padding-block:8px}
+.mock b{font-family:var(--display);font-weight:500;font-size:1.02rem}
+.seg{display:inline-flex;border:1px solid color-mix(in srgb,var(--on-char) 30%,transparent);border-radius:var(--r-pill);overflow:hidden;flex-wrap:wrap}
+.seg button{background:none;border:0;color:var(--on-char-muted);padding:5px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--on-char);color:var(--char)}
+.mock label{display:inline-flex;gap:6px;align-items:center;cursor:pointer;margin:0;font-weight:400}
+.mock select{background:var(--char);color:var(--on-char);border:1px solid color-mix(in srgb,var(--on-char) 30%,transparent);border-radius:var(--r-pill);padding:4px 10px;width:auto}
+.mock .spacer{flex:1}
+
+header.top{border-bottom:1px solid var(--line);background:var(--clay)}
+.top .wrap{display:flex;align-items:center;gap:20px;min-height:64px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand .mark{width:30px;height:30px;border-radius:6px;background:var(--char);display:grid;place-items:center}
+.brand b{font-family:var(--display);font-weight:600;font-size:1.2rem;letter-spacing:.02em}
+.brand span{display:block;font-size:.66rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+nav.main{display:flex;gap:18px;margin-left:auto;flex-wrap:wrap;align-items:center}
+nav.main a{text-decoration:none;font-size:.92rem;padding:4px 0;border-bottom:1px solid transparent}
+nav.main a[aria-current="page"]{border-bottom-color:var(--copper)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-s);padding:10px 18px;font-weight:500;text-decoration:none;border:1px solid transparent;cursor:pointer;white-space:nowrap;background:none}
+.btn-primary{background:var(--forest);color:var(--forest-ink)}
+.btn-ghost{border-color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--clay)}
+.btn-small{padding:6px 12px;font-size:.86rem}
+main.view{padding-block:30px 64px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:20px;min-width:0}
+label{display:block;font-size:.86rem;font-weight:500;margin-bottom:6px}
+input[type=text],input[type=email],input[type=number],input[type=date],select,textarea{width:100%;border:1px solid var(--line);background:var(--clay);border-radius:var(--r-s);padding:10px 12px}
+textarea{min-height:100px;resize:vertical}
+input.code{letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono)}
+.hint{font-size:.83rem;color:var(--muted)}
+.notice{border:1px solid var(--line);border-radius:var(--r-s);padding:12px 14px;font-size:.9rem;background:var(--surface)}
+.err{color:var(--copper)}
+.pill{display:inline-block;border-radius:var(--r-pill);padding:2px 10px;font-size:.76rem;border:1px solid currentColor;white-space:nowrap}
+.pill.ok{color:var(--ok)} .pill.used{color:var(--muted)} .pill.warn{color:var(--warn)} .pill.cu{color:var(--copper)}
+.bar{height:6px;border-radius:9px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--forest)}
+
+[data-db]{position:relative}
+body.show-db [data-db]{outline:1.5px dashed var(--db);outline-offset:3px;border-radius:4px}
+body.show-db [data-db]::after{content:attr(data-db);position:absolute;top:-11px;right:4px;z-index:5;background:var(--db-bg);color:var(--db);font:500 .64rem/1.4 var(--mono);padding:1px 6px;border-radius:4px;border:1px solid var(--db);white-space:nowrap;pointer-events:none;max-width:calc(100% - 8px);overflow:hidden;text-overflow:ellipsis}
+.db-legend{display:none}
+body.show-db .db-legend{display:block;border:1px dashed var(--db);background:var(--db-bg);border-radius:var(--r-s);padding:12px 14px;font-size:.88rem;margin-bottom:22px}
+.db-legend code{font-family:var(--mono);color:var(--db);font-size:.8rem}
+
+/* Accueil / connexion */
+.login{display:grid;grid-template-columns:1.1fr 1fr;border-radius:var(--r-m);overflow:hidden;border:1px solid var(--line)}
+.login .side{background:var(--char);color:var(--on-char);padding:38px;display:flex;flex-direction:column;gap:24px}
+.login .side .muted{color:var(--on-char-muted)}
+.login .form{background:var(--surface);padding:38px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.formats{display:grid;gap:10px}
+.formats div{border-top:1px solid color-mix(in srgb,var(--on-char) 20%,transparent);padding-top:10px;display:grid;grid-template-columns:1fr auto;gap:2px 12px}
+.formats b{font-family:var(--display);font-weight:500}
+.tabs{display:flex;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs button{background:none;border:0;padding:10px 14px;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted)}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--copper)}
+@media (max-width:820px){.login{grid-template-columns:1fr}.login .side,.login .form{padding:24px}}
+
+/* Parcours : carte des pôles */
+.hours{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.stat{border:1px solid var(--line);border-radius:var(--r-s);padding:14px;background:var(--surface)}
+.stat b{font-family:var(--display);font-size:1.7rem;font-weight:500;display:block;line-height:1.1}
+.poles{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.pole{display:flex;flex-direction:column;gap:10px}
+.pole .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.pole .no{font-family:var(--mono);color:var(--copper);font-size:.8rem}
+.strip{display:flex;height:14px;border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.strip span{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+/* Leçon */
+.app{display:grid;grid-template-columns:300px minmax(0,1fr);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden;background:var(--surface)}
+.app aside{border-right:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.app .content{padding:22px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.module{border-top:1px solid var(--line);padding-top:10px}
+.module > b{font-family:var(--display);font-weight:500;font-size:1rem;display:block;margin-bottom:4px}
+.lesson{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;padding:7px 8px;border-radius:var(--r-s);cursor:pointer;font-size:.88rem}
+.lesson:hover,.lesson[aria-current="true"]{background:var(--clay)}
+.lesson[aria-current="true"]{font-weight:600}
+.dot{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--muted);flex:none;display:grid;place-items:center}
+.lesson.done .dot{background:var(--ok);border-color:var(--ok)}
+.lesson.done .dot::after{content:"";width:6px;height:3px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.tag{font-family:var(--mono);font-size:.68rem;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--muted)}
+.tag.pays{color:var(--copper);border-color:var(--copper)}
+
+.player{background:var(--char);color:var(--on-char);border-radius:var(--r-m);overflow:hidden;display:flex;flex-direction:column}
+.screen{aspect-ratio:16/9;max-width:100%;position:relative;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 70%,#7a3a14 0%,#2a1a10 35%,#0a0e0c 75%)}
+.screen svg.kiln{width:min(46%,280px)}
+.screen .big{position:absolute;width:70px;height:70px;border-radius:50%;border:1px solid rgba(238,242,236,.6);background:rgba(10,14,12,.35);display:grid;place-items:center;cursor:pointer;color:var(--on-char)}
+.screen .subs{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(0,0,0,.6);padding:4px 10px;border-radius:4px;font-size:.9rem;max-width:90%;text-align:center}
+.screen .loopbadge{position:absolute;top:12px;left:12px;background:var(--copper);color:#fff;font-size:.74rem;padding:3px 9px;border-radius:var(--r-pill)}
+.screen .langbadge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.55);font:500 .72rem var(--mono);padding:3px 8px;border-radius:4px}
+.timeline{position:relative;height:28px;margin:0 14px;cursor:pointer}
+.timeline .track{position:absolute;left:0;right:0;top:12px;height:4px;background:rgba(238,242,236,.25);border-radius:4px}
+.timeline .fill{position:absolute;left:0;top:12px;height:4px;background:var(--copper);border-radius:4px}
+.timeline .loop{position:absolute;top:9px;height:10px;background:rgba(181,101,43,.4);border-left:2px solid var(--copper);border-right:2px solid var(--copper)}
+.timeline .chap{position:absolute;top:8px;width:2px;height:12px;background:rgba(238,242,236,.7)}
+.timeline .knob{position:absolute;top:7px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--on-char)}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:4px 10px 10px;font-size:.82rem}
+.controls button,.controls select{background:none;border:1px solid rgba(238,242,236,.25);color:var(--on-char);border-radius:var(--r-pill);padding:5px 10px;cursor:pointer;width:auto}
+.controls select option{color:#1B2420}
+.controls button[aria-pressed="true"]{background:var(--on-char);color:var(--char)}
+.controls .time{margin:0 6px;font-variant-numeric:tabular-nums;color:rgba(238,242,236,.8)}
+.controls input[type=range]{width:80px;accent-color:var(--copper)}
+.controls .grow{flex:1}
+.chapters{display:flex;gap:8px;flex-wrap:wrap}
+.chapters button{border:1px solid var(--line);background:var(--surface);border-radius:var(--r-pill);padding:5px 12px;font-size:.82rem;cursor:pointer}
+.panel{border:1px solid var(--line);border-radius:var(--r-s);padding:16px}
+.datagrid{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-s)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:.78rem;background:var(--clay)}
+td.code{font-family:var(--mono);font-size:.82rem}
+.quiz .opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:var(--r-s);padding:10px 12px;cursor:pointer;margin:0;font-weight:400}
+.quiz .opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+.quiz .opt.wrong{border-color:var(--copper);background:color-mix(in srgb,var(--copper) 10%,transparent)}
+@media (max-width:880px){.app{grid-template-columns:1fr}.app aside{border-right:0;border-bottom:1px solid var(--line)}}
+
+/* Attestation */
+.cert{border:1px solid var(--line);background:var(--surface);border-radius:var(--r-m);padding:clamp(20px,4vw,48px);display:grid;gap:18px;max-width:820px;margin:0 auto;position:relative;overflow:hidden}
+.cert::before{content:"";position:absolute;inset:10px;border:1px solid var(--forest);border-radius:8px;pointer-events:none;opacity:.5}
+.cert h1{font-size:clamp(1.6rem,3.6vw,2.4rem)}
+.cert .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+
+/* Back-office */
+.admin{display:grid;grid-template-columns:240px minmax(0,1fr);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden;background:var(--surface)}
+.admin aside{background:var(--char);color:var(--on-char);padding:18px;display:flex;flex-direction:column;gap:2px}
+.admin aside a{color:var(--on-char-muted);text-decoration:none;padding:9px 12px;border-radius:var(--r-s);font-size:.92rem}
+.admin aside a[aria-current="page"]{background:rgba(238,242,236,.1);color:var(--on-char)}
+.admin aside .sep{font:500 .66rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--on-char-muted);margin:12px 12px 4px;opacity:.7}
+.admin .content{padding:24px;min-width:0;display:flex;flex-direction:column;gap:18px}
+.gen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end;border:1px solid var(--line);border-radius:var(--r-s);padding:16px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-s)}
+details.ls{border:1px solid var(--line);border-radius:var(--r-s);padding:10px 14px;background:var(--surface)}
+details.ls summary{cursor:pointer;display:flex;gap:10px;align-items:center;flex-wrap:wrap;list-style:none}
+details.ls summary::-webkit-details-marker{display:none}
+.drop{border:1.5px dashed var(--line);border-radius:var(--r-m);padding:20px;text-align:center;display:grid;gap:8px;justify-items:center}
+.upl-bar{height:6px;border-radius:9px;background:var(--line);overflow:hidden;width:100%}
+.upl-bar i{display:block;height:100%;background:var(--copper);width:0;transition:width .2s}
+.layers{display:grid;grid-template-columns:7fr 3fr;gap:0;border-radius:var(--r-s);overflow:hidden;border:1px solid var(--line)}
+.layers div{padding:14px}
+.layers .common{background:var(--leaf)}
+.layers .local{background:color-mix(in srgb,var(--copper) 18%,var(--surface))}
+.sign{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.sign span{height:22px;border-radius:3px;background:var(--line)}
+.sign span.y{background:var(--ok)} .sign span.n{background:var(--copper)}
+@media (max-width:880px){.admin{grid-template-columns:1fr}.admin aside{flex-direction:row;overflow-x:auto}.admin aside .sep{display:none}.gen{grid-template-columns:1fr 1fr}.layers{grid-template-columns:1fr}}
+@media (max-width:520px){.gen{grid-template-columns:1fr}}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;align-items:start}
+.mcard{display:flex;flex-direction:column;gap:10px}
+.mcard.open{border-color:var(--forest);box-shadow:0 0 0 1px var(--forest)}
+.pchip{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border-radius:4px;color:#fff;font:600 .76rem var(--mono)}
+.chips{gap:6px}
+.chips button{border:1px solid var(--line);background:var(--surface);border-radius:var(--r-pill);padding:5px 12px;font-size:.84rem;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--clay);border-color:var(--ink)}
+table.matrix td,table.matrix th{padding:7px 10px}
+.cascade{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cascade div{flex:1;min-width:150px;border:1px solid var(--line);border-radius:var(--r-s);padding:14px;background:var(--surface);display:grid;gap:4px}
+.cascade div b{font-family:var(--display);font-size:2rem;font-weight:500;line-height:1}
+.cascade div span{font-size:.84rem;color:var(--muted)}
+.cascade i{font-style:normal;color:var(--copper);font-size:1.4rem}
+.step-row.is-done b{color:var(--ok)}
+.app.proto{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+.app.proto aside{border-right:0;border-left:1px solid var(--line)}
+@media (max-width:880px){.app.proto{grid-template-columns:1fr}.app.proto aside{border-left:0;border-top:1px solid var(--line)}}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--clay);padding:9px 16px;border-radius:var(--r-pill);font-size:.9rem;z-index:90}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="mock">
+  <div class="wrap">
+    <b>Maquette · École REKARBON</b>
+    <div class="seg" role="group" aria-label="Rôle">
+      <button data-side="eleve" aria-pressed="true">Stagiaire</button>
+      <button data-side="ref" aria-pressed="false">Référent partenaire</button>
+      <button data-side="admin" aria-pressed="false">REKARBON (back-office)</button>
+    </div>
+    <div class="seg" role="group" aria-label="Langue · Lokota" id="langSeg"><button data-lang="fr" aria-pressed="true">Français</button><button data-lang="ln" aria-pressed="false">Lingála</button></div>
+    <label for="country">Territoire
+      <select id="country">
+        <option value="GF">Guyane · FR</option><option value="RE">La Réunion · FR</option><option value="CI">Côte d'Ivoire · FR</option>
+        <option value="CG">Congo · FR / LN</option><option value="CD">RD Congo · FR / LN</option><option value="VN">Vietnam · EN / VI</option><option value="ID">Indonésie · EN / ID</option>
+      </select></label>
+    <label for="dbToggle"><input type="checkbox" id="dbToggle"> Cases prévues en base</label>
+    <span class="spacer"></span>
+    <span style="color:var(--on-char-muted)">Données d'exemple</span>
+  </div>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#accueil"><span class="mark"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1 14 5v6l-6 4-6-4V5z" fill="none" stroke="#B5652B" stroke-width="1.5"/><circle cx="8" cy="8" r="2" fill="#7FC39C"/></svg></span><span><b>REKARBON</b><span>École des métiers du carbone</span></span></a>
+    <nav class="main" id="nav"></nav>
+  </div>
+</header>
+
+<main class="view wrap" id="view"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Contenu repris du document « Architecture dossier formation REKARBON » ---------- */
+const COUNTRY={
+  GF:{name:'Guyane',lang:'Français',langs:['FR'],org:'Collectivité Territoriale de Guyane',of:'Organisme Qualiopi guyanais (à identifier)',reg:'Label Bas-Carbone (ouvert aux DROM), CRCF européen, ICPE',local:'Acacia mangium, sols au mercure (orpaillage), bancs de vase de l’Amazone',money:'€',site:'Pilotes Guyane (4 sites)'},
+  RE:{name:'La Réunion',lang:'Français',langs:['FR'],org:'Région Réunion',of:'Organisme Qualiopi réunionnais',reg:'Label Bas-Carbone, CRCF européen, ICPE',local:'Déchets verts, sols volcaniques, site pilote de La Crête',money:'€',site:'Site pilote La Crête (55 ha)'},
+  CI:{name:'Côte d’Ivoire',lang:'Français',langs:['FR'],org:'Syndicats cacao et café (Man)',of:'Partenaire opérationnel local',reg:'Article 6, cadre national carbone, standards Verra / Gold Standard',local:'Coques de cacao, pulpe de café, organisation en coopératives',money:'FCFA',site:'Coopératives de la région de Man'},
+  CG:{name:'Congo',lang:'Français / Lingála',langs:['FR','LN'],org:'Partenaires de Pointe-Noire',of:'Partenaire opérationnel local',reg:'Article 6, cadre national carbone, standards Verra / Gold Standard',local:'Résidus de scieries, déchets verts, mangroves du littoral',money:'FCFA',site:'Pointe-Noire, ateliers et scieries partenaires'},
+  CD:{name:'RD Congo',lang:'Français / Lingála',langs:['FR','LN'],org:'Partenaires locaux en RDC',of:'Partenaire opérationnel local',reg:'Article 6, cadre national carbone, standards Verra / Gold Standard',local:'Résidus agricoles, forêts du bassin du Congo, savanes dégradées',money:'CDF',site:'Pilotes RDC (à définir)'},
+  VN:{name:'Vietnam',lang:'English / Tiếng Việt',langs:['EN','VI'],org:'Partenaires de Ben Tre',of:'Partenaire local',reg:'Article 6, réglementation vietnamienne du marché carbone',local:'Coques de noix de coco, rizières, delta du Mékong',money:'VND',site:'Ben Tre'},
+  ID:{name:'Indonésie',lang:'English / Bahasa',langs:['EN','ID'],org:'Syndicat cacao indonésien',of:'Partenaire local',reg:'Article 6, SRN PPI (registre national)',local:'Cabosses de cacao, tourbières, mangroves',money:'IDR',site:'Coopératives cacao'}
+};
+const POLES=[
+  {n:0,t:'Socle : comprendre le marché du carbone',h:50,c:'#1F4D3A',items:['Crédits d’évitement et crédits de retrait','Marchés volontaire et réglementé, Article 6','Standards : Puro.earth, Verra, Gold Standard, Isometric','Prix, acheteurs et contrats d’achat','Partage des revenus et fonds territorial']},
+  {n:1,t:'Biochar : production et Wood Vault',h:80,c:'#121815',items:['Gisements et logistique','Séchage et rendement','Pyrolyse : four 4 m³, Kon-Tiki, ligne industrielle','Qualité, analyses et traçabilité des lots','Usages : sol, béton, asphalte','Wood Vault','ICPE, incendie, EPI']},
+  {n:2,t:'Restauration des sols',h:55,c:'#7A5A3A',items:['Diagnostic des sols','Apport de biochar','Sols pollués et phytoextraction','Biologie des sols, bokashi','Reboisement et pépinières','Mesure du carbone du sol']},
+  {n:3,t:'ERW : altération forcée des roches',h:35,c:'#6B7480',items:['Principe et intérêt en climat chaud','Choix de la roche, granulométrie, doses','Couplage biochar + ERW','Mesure : sol, eau, cations']},
+  {n:4,t:'Mangroves',h:55,c:'#2F6E6A',items:['Écosystème mangrove','Restauration et suivi de la reprise','Méthode Label Bas-Carbone mangroves','Protection du littoral, biochar marin']},
+  {n:5,t:'Biodiversité',h:50,c:'#5E8C3A',items:['Protocoles de terrain et indicateurs','Capteurs acoustiques, pièges photo','Crédits biodiversité, SNCRR','Espèces invasives']},
+  {n:6,t:'MRV et données',h:45,c:'#2F5D8C',items:['Mesure d’abord, crédits ensuite','Capteurs et unité edge','Signature et traçabilité, RDUE','Préparer un audit de certification']},
+  {n:7,t:'Transverse',h:30,c:'#B5652B',items:['Sécurité au travail, ICPE','Outils numériques de terrain','Créer son activité dans le carbone']},
+  {n:8,t:'Mer et carbone bleu',h:45,c:'#1E5F8C',nw:true,items:['Herbiers et sédiments marins','Collecte et traitement des sargasses','Acoustique sous-marine','Suivi par drone du littoral']},
+  {n:9,t:'Comptabilité carbone et RSE',h:40,c:'#7A4E8C',nw:true,items:['Bilan des émissions de gaz à effet de serre','Reporting CSRD, analyse de cycle de vie','Conformité RDUE','Stratégie climat et achat de crédits']}
+];
+const DOMAINES=[['terre','Terre : agriculture et sols','#7A5A3A'],['foret','Forêt et biodiversité','#5E8C3A'],['mer','Mer et littoral','#1E5F8C'],['industrie','Industrie : biochar','#8A5A2B'],['mrv','Mesure, MRV et données','#2F5D8C'],['marche','Marché et finance','#1F4D3A'],['rse','Entreprise et RSE','#7A4E8C'],['territoire','Territoire et public','#B5652B']];
+const NIV={1:'Opérateur',2:'Technicien',3:'Ingénieur / chargé de projet',4:'Responsable / expert'};
+const FMT={MC:'Module court',PT:'Parcours technicien',PM:'Parcours métier 600 h',FC:'Formation continue'};
+const METIERS=[
+['terre','Agent d\u2019épandage biochar et roches (ERW)',1,'MC PM',[1,2,3,7],1],['terre','Préleveur d\u2019échantillons de sol',1,'MC',[2,6],1],['terre','Technicien sols et carbone du sol',2,'PT PM',[2,3,6],1],['terre','Conseiller agronome carbone',3,'PT FC',[0,2,3]],['terre','Animateur de coopérative ou de syndicat carbone',2,'MC PT',[0,2,7]],['terre','Technicien dépollution des sols',2,'PT',[2,7],1],['terre','Chef de projet Label Bas-Carbone agricole',3,'FC',[0,2,6]],
+['foret','Ouvrier de reboisement et pépiniériste',1,'MC PM',[2,5,7],1],['foret','Agent de lutte contre les espèces invasives',1,'MC',[5,1],1],['foret','Technicien d\u2019inventaire forestier carbone',2,'PT',[5,6]],['foret','Technicien biodiversité',2,'PT PM',[5,6],1],['foret','Écologue de projet',3,'FC',[5,6]],['foret','Gestionnaire de site de compensation (SNCRR)',3,'FC',[0,5]],['foret','Analyste télédétection (satellite, drone)',3,'FC',[5,6]],
+['mer','Agent de restauration de mangroves',1,'MC PM',[4,8,7],1],['mer','Opérateur de collecte de sargasses',1,'MC',[8,1,7]],['mer','Technicien suivi mangroves et herbiers',2,'PT',[4,8,6]],['mer','Plongeur scientifique',2,'FC',[8,5,6]],['mer','Technicien acoustique sous-marine',2,'FC',[8,5,6]],['mer','Télépilote de drone littoral',2,'MC FC',[8,6]],['mer','Chargé de projet carbone bleu',3,'FC',[0,4,8,6]],
+['industrie','Opérateur de pyrolyse',1,'MC PM',[1,7],1],['industrie','Agent de collecte et préparation de biomasse',1,'MC PM',[1,7],1],['industrie','Opérateur Wood Vault',1,'MC',[1,6],1],['industrie','Conducteur de ligne biochar',2,'PM',[1,6,7],1],['industrie','Technicien de maintenance',2,'PT',[1,7],1],['industrie','Technicien qualité et laboratoire',2,'PT PM',[1,6],1],['industrie','Logisticien biomasse et gisements',2,'PT',[1,0]],['industrie','Chef d\u2019équipe production',2,'PM FC',[1,7]],['industrie','Responsable HSE et ICPE',3,'FC',[1,7]],['industrie','Ingénieur procédés pyrolyse',3,'FC',[1,6]],['industrie','Formulateur matériaux biochar (béton, asphalte)',3,'FC',[1,0]],['industrie','Directeur d\u2019usine biochar',4,'FC',[0,1,7]],
+['mrv','Technicien capteurs et unité edge',2,'PT PM',[6,7],1],['mrv','Technicien MRV terrain',2,'PT PM',[6,0],1],['mrv','Géomaticien SIG',3,'FC',[6]],['mrv','Analyste de données carbone',3,'FC',[6,0]],['mrv','Ingénieur MRV',3,'FC',[0,6]],['mrv','Développeur de plateformes MRV',3,'FC',[6]],['mrv','Auditeur ou vérificateur',4,'FC',[0,6]],
+['marche','Développeur de projets carbone',3,'FC',[0,6]],['marche','Chargé de relations communautés et partage des revenus',3,'FC',[0,7]],['marche','Originateur ou négociant de crédits',3,'FC',[0]],['marche','Analyste qualité des crédits',3,'FC',[0,6]],['marche','Juriste carbone (Article 6, contrats)',4,'FC',[0]],['marche','Gestionnaire de fonds carbone',4,'FC',[0]],
+['rse','Référent climat en entreprise',2,'MC FC',[0,9]],['rse','Consultant bilan carbone',3,'FC',[0,9]],['rse','Chargé de reporting CSRD',3,'FC',[9,6]],['rse','Analyste cycle de vie (ACV)',3,'FC',[9,6]],['rse','Chargé de conformité RDUE',3,'FC',[9,6]],['rse','Acheteur responsable',3,'MC FC',[0,9]],['rse','Responsable RSE',4,'FC',[0,9,7]],['rse','Responsable stratégie climat',4,'FC',[0,9]],
+['territoire','Élu ou agent formé au marché du carbone',2,'MC',[0]],['territoire','Animateur territorial carbone',2,'PT',[0,2,7]],['territoire','Chargé de mission transition écologique',3,'FC',[0,5]],['territoire','Instructeur de projets (ICPE, environnement)',3,'FC',[1,7]],['territoire','Formateur aux métiers du carbone',3,'FC',[0,1,2,3,4,5,6,7,8,9]]
+].map(([d,t,n,f,p,g])=>({d,t,n,f:f.split(' '),p,guyane:!!g}));
+const FORMATS=[['Modules courts','Élus, agents, agriculteurs, entreprises','1 à 5 jours'],['Parcours technicien','Salariés en poste','250 à 300 h'],['Parcours métier','Demandeurs d’emploi, futurs opérateurs','600 h dont 200 h de stage']];
+/* leçons d'exemple : pôle 1 détaillé */
+const MODULES=[
+  {t:'Gisements et logistique',l:[['Identifier les gisements locaux',14,0,1],['Collecte et stockage',11,0,0]]},
+  {t:'Séchage',l:[['Humidité et matière sèche',12,0,0],['Calculer le rendement (~29 %)',9,0,0]]},
+  {t:'Pyrolyse',l:[['Le four 4 m³ à post-combustion',18,0,0],['Conduite d’une fournée',22,0,0],['Kon-Tiki : démonstration terrain',15,0,1],['Températures et sécurité',13,0,0]]},
+  {t:'Qualité et traçabilité',l:[['Carbone fixe et rapport H/C',12,0,0],['Prélever un lot sous 7 jours',10,0,0]]},
+  {t:'Réglementation',l:[['ICPE et sécurité incendie',16,1,0],['EPI et consignes',8,0,0]]}
+];
+let LESSONS=[];MODULES.forEach((m,mi)=>m.l.forEach((l,li)=>LESSONS.push({id:mi+'-'+li,mi,mod:m.t,title:l[0],min:l[1],local:!!l[2],done:mi<1||(mi===2&&li<1),quiz:li===m.l.length-1})));
+let current=LESSONS.findIndex(l=>!l.done);
+const CHAPTERS=[['Préparer la fournée',0],['Allumage',.2],['Montée en température',.45],['Erreur fréquente',.65],['Extinction et refroidissement',.82]];
+const SUBS=['On vérifie l’humidité du lot avant de charger : moins de 20 %.','L’allumage se fait par le haut, couvercle ouvert.','On surveille la température : entre 450 et 650 °C.','Ici, la fumée est trop blanche : la biomasse est encore humide.','On éteint à l’eau puis on laisse refroidir avant d’ouvrir.'];
+const QUIZ=[
+  {q:'Quel taux d’humidité maximal vise-t-on avant de charger le four ?',o:['10 %','20 %','40 %','60 %'],a:1},
+  {q:'Sous quel délai faut-il prélever l’échantillon d’un lot pour l’analyse ?',o:['24 heures','7 jours','30 jours','À la vente'],a:1},
+  {q:'Quel indicateur montre la stabilité du biochar ?',o:['La couleur','Le rapport H/C','Le poids du sac','Le prix de vente'],a:1}
+];
+const PILOT=[['Lot BC-2026-114','Acacia mangium','612 °C','4,2 m³','1,08 t','H/C 0,38','Analysé'],['Lot BC-2026-115','Déchets verts','588 °C','4,0 m³','0,94 t','H/C 0,41','En attente'],['Lot BC-2026-116','Connexes de scierie','634 °C','4,1 m³','1,12 t','—','Prélevé']];
+let CODES=[
+  {code:'RKB-TEST-0001',course:'Parcours métier 600 h',org:'Essai',days:365,state:'Disponible',by:'test@gmail.com',test:true},
+  {code:'RKB-GF-SOC-7K4P9X',course:'Module court : marché du carbone',org:'CTG · élus',days:90,state:'Activé',by:'stagiaire.exemple1@gmail.com'},
+  {code:'RKB-GF-OPB-M2QR8T',course:'Module court : opérateur biochar',org:'CTG · pilote 2',days:180,state:'Disponible',by:''},
+  {code:'RKB-CI-SOC-HX3ZV6',course:'Module court : marché du carbone',org:'Syndicat cacao Man',days:90,state:'Disponible',by:''}
+];
+const TRAINEES=[
+  ['Stagiaire exemple 1','Promotion Guyane 2027','Parcours métier',212,600,'92 %',14.5],
+  ['Stagiaire exemple 2','Promotion Guyane 2027','Parcours métier',198,600,'88 %',13],
+  ['Stagiaire exemple 3','Promotion Guyane 2027','Parcours métier',176,600,'81 %',12],
+  ['Stagiaire exemple 4','Agents CTG','Module court : marché du carbone',14,14,'100 %',16.5],
+  ['Stagiaire exemple 5','Agriculteurs pilote 4','Module court : sols, biochar et ERW',7,21,'67 %',null]
+];
+
+/* ---------- État et routage ---------- */
+let country='GF';
+const SIDE_HOME={eleve:'parcours',ref:'ref',admin:'admin'};
+let lastSide='eleve';const sideOf=h=>h==='metiers'?lastSide:(lastSide=h.startsWith('admin')?'admin':h.startsWith('ref')?'ref':'eleve');
+function nav(side){
+  const items=side==='admin'?[['admin','Back-office'],['parcours','Voir comme stagiaire'],['accueil','Déconnexion']]
+    :side==='ref'?[['ref','Ma promotion'],['metiers','Métiers'],['accueil','Déconnexion']]
+    :[['parcours','Mon parcours'],['metiers','Métiers'],['lecon','Reprendre'],['quiz','Évaluation'],['habilitations','Habilitations'],['protocole','Protocole terrain'],['accueil','Déconnexion']];
+  const h=location.hash.slice(1)||'accueil';
+  $('#nav').innerHTML=items.map(([k,t])=>`<a href="#${k}" ${h===k||(k==='admin'&&h.startsWith('admin'))?'aria-current="page"':''}>${t}</a>`).join('');
+}
+function render(){
+  const h=location.hash.slice(1)||'accueil';const side=sideOf(h);
+  document.querySelectorAll('[data-side]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.side===side));
+  nav(side);stopPlayer();
+  const legend=`<div class="db-legend">Les cases bleues montrent où chaque information sera enregistrée (Supabase), au format <code>table.colonne</code>. Le contenu est stocké comme des données : <code>course_variants</code> porte la version par pays et par langue, sans réécrire la plateforme.</div>`;
+  $('#view').innerHTML=legend+(VIEWS[h]||VIEWS.accueil)();
+  (AFTER[h]||(()=>{}))();window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-side]').forEach(b=>b.onclick=()=>{location.hash=SIDE_HOME[b.dataset.side]});
+$('#country').onchange=e=>{country=e.target.value;toast('Territoire : '+COUNTRY[country].name+' · '+COUNTRY[country].lang);render()};
+$('#dbToggle').onchange=e=>{document.body.classList.toggle('show-db',e.target.checked);try{localStorage.setItem('rkb-db',e.target.checked?'1':'')}catch(_){}};
+try{if(localStorage.getItem('rkb-db')){$('#dbToggle').checked=true;document.body.classList.add('show-db')}}catch(_){}
+function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2400)}
+const VIEWS={},AFTER={};
+const C=()=>COUNTRY[country];
+const CORE=POLES.filter(p=>!p.nw);const total=CORE.reduce((s,p)=>s+p.h,0);const PH=n=>POLES.find(p=>p.n===n);
+
+/* ---------- Accueil / connexion ---------- */
+VIEWS.accueil=()=>`
+<div class="login">
+  <div class="side">
+    <div class="stack">
+      <span class="kicker" style="color:var(--copper)">Territoire : ${esc(C().name)}</span>
+      <h1>Former sur place les personnes qui feront tourner les projets carbone.</h1>
+      <p class="muted">Biochar, sols, ERW, mangroves, biodiversité, MRV. Un tronc commun identique partout, une couche pays adaptée à ${esc(C().name)}.</p>
+    </div>
+    <div class="formats" data-db="courses.format">
+      ${FORMATS.map(f=>`<div><b>${f[0]}</b><span class="mono">${f[2]}</span><span class="muted" style="grid-column:1/-1;font-size:.86rem">${f[1]}</span></div>`).join('')}
+    </div>
+    <p class="muted" style="font-size:.84rem">Délivrance : ${esc(C().of)}. Pratique : ${esc(C().site)}.</p>
+    <a class="btn btn-ghost" style="border-color:var(--on-char);color:var(--on-char);justify-self:start;align-self:flex-start" href="#metiers">Découvrir les ${METIERS.length} métiers formés</a>
+  </div>
+  <div class="form">
+    <div class="tabs" role="tablist"><button role="tab" id="tCode" aria-selected="true">J'ai un code</button><button role="tab" id="tLogin" aria-selected="false">Déjà inscrit·e</button></div>
+    <form id="fCode" class="stack" novalidate>
+      <div data-db="profiles.email"><label for="e1">Adresse e-mail</label><input id="e1" type="email" value="test@gmail.com"></div>
+      <div data-db="access_codes.code"><label for="c1">Code d'accès</label><input id="c1" class="code" type="text" value="RKB-TEST-0001"></div>
+      <div data-db="profiles.locale"><label for="l1">Langue des cours</label><select id="l1">${C().langs.map(l=>`<option>${l}</option>`).join('')}</select></div>
+      <div class="notice"><b>Compte d'essai</b> : test@gmail.com, code <span class="mono">RKB-TEST-0001</span>. Déjà rempli, cliquez pour entrer.</div>
+      <p class="err" id="cErr" hidden></p>
+      <button class="btn btn-primary">Recevoir mon lien et entrer</button>
+    </form>
+    <form id="fLogin" class="stack" hidden novalidate>
+      <div><label for="e2">Adresse e-mail</label><input id="e2" type="email" value="test@gmail.com"></div>
+      <button class="btn btn-primary">Recevoir mon lien de connexion</button>
+    </form>
+    <p class="hint">Les codes sont remis par l'organisme de formation ou par le partenaire (collectivité, syndicat, coopérative).</p>
+  </div>
+</div>`;
+AFTER.accueil=()=>{
+  const sw=a=>{$('#tCode').setAttribute('aria-selected',a);$('#tLogin').setAttribute('aria-selected',!a);$('#fCode').hidden=!a;$('#fLogin').hidden=a};
+  $('#tCode').onclick=()=>sw(true);$('#tLogin').onclick=()=>sw(false);
+  $('#fCode').onsubmit=e=>{e.preventDefault();const code=$('#c1').value.trim().toUpperCase(),c=CODES.find(x=>x.code===code),err=$('#cErr');
+    if(!c){err.hidden=false;err.textContent='Ce code n’existe pas. Vérifiez les lettres et les chiffres.';return}
+    if(c.state!=='Disponible'&&!c.test){err.hidden=false;err.textContent='Ce code a déjà été utilisé.';return}
+    if(!c.test){c.state='Activé';c.by='test@gmail.com'}toast('Parcours ajouté : '+c.course);location.hash='parcours'};
+  $('#fLogin').onsubmit=e=>{e.preventDefault();toast('Lien envoyé (maquette) : ouverture de votre espace');setTimeout(()=>location.hash='parcours',900)};
+};
+
+/* ---------- Stagiaire : parcours ---------- */
+VIEWS.parcours=()=>{
+  const done=212;
+  return `<div class="stack" style="gap:24px">
+  <div class="row" style="justify-content:space-between;align-items:flex-end">
+    <div class="stack" style="gap:4px"><span class="kicker">Promotion ${esc(C().name)} 2027 · ${esc(C().lang)}</span><h1 data-db="profiles.full_name">Bonjour Test</h1><p class="muted">Parcours métier 600 h : 400 h de cours et ateliers, 200 h de stage.</p></div>
+    <a class="btn btn-primary" href="#lecon">Reprendre : ${esc(LESSONS[current].title)}</a>
+  </div>
+  <div class="hours">
+    <div class="stat" data-db="attendance (émargement)"><b class="num">${done} h</b><span class="muted">réalisées sur 600 h</span></div>
+    <div class="stat" data-db="lesson_progress"><b class="num">38 %</b><span class="muted">des cours vus</span></div>
+    <div class="stat" data-db="quiz_attempts"><b class="num">14,5/20</b><span class="muted">moyenne aux évaluations</span></div>
+    <div class="stat" data-db="placements (stage)"><b class="num">0 / 200 h</b><span class="muted">stage, dès mai 2027</span></div>
+  </div>
+  <div class="card stack">
+    <div class="row" style="justify-content:space-between"><h3>Les 400 h de cours par pôle</h3><span class="hint num">Total ${total} h</span></div>
+    <div class="strip" data-db="courses.hours">${CORE.map(p=>`<span style="width:${p.h/total*100}%;background:${p.c}" title="${esc(p.t)} · ${p.h} h"></span>`).join('')}</div>
+    <div class="legend">${CORE.map(p=>`<span><i style="background:${p.c}"></i>${p.n}. ${p.h} h</span>`).join('')}</div>
+  </div>
+  <div class="poles">
+    ${POLES.map((p,i)=>{const pct=[100,45,20,0,0,0,10,0][i]||0;return `<article class="card pole" ${i===1?'data-db="courses (un pôle = un parcours)"':''}>
+      <div class="head"><span class="no">PÔLE ${p.n}</span>${p.nw?'<span class="pill cu">Nouveau · formation continue</span>':''}<span class="mono">${p.h} h</span></div>
+      <h3>${esc(p.t)}</h3>
+      <ul style="margin:0;padding-left:18px;color:var(--muted);font-size:.86rem">${p.items.slice(0,4).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+      ${i===0||i===1?`<p class="hint">Couche ${esc(C().name)} : ${esc(i===0?C().reg:C().local)}</p>`:''}
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="row" style="justify-content:space-between"><span class="hint num">${pct} %</span>${i===1?'<a class="btn btn-primary btn-small" href="#lecon">Continuer</a>':pct===100?'<a class="btn btn-ghost btn-small" href="#attestation">Voir l’attestation</a>':'<a class="btn btn-ghost btn-small" href="#lecon">Ouvrir</a>'}</div>
+    </article>`}).join('')}
+  </div>
+</div>`};
+
+/* ---------- Stagiaire : leçon ---------- */
+let P={};function stopPlayer(){clearInterval(P.timer);P.playing=false}
+const fmt=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+VIEWS.lecon=()=>{const L=LESSONS[current];const done=LESSONS.filter(l=>l.done).length;
+return `<div class="app">
+  <aside>
+    <div class="stack" style="gap:6px">
+      <span class="kicker">Pôle 1 · 80 h</span>
+      <b data-db="courses.title">Biochar : production et Wood Vault</b>
+      <span class="hint num">${done} / ${LESSONS.length} leçons</span>
+      <div class="bar"><i style="width:${Math.round(done/LESSONS.length*100)}%"></i></div>
+    </div>
+    ${MODULES.map((m,mi)=>`<div class="module" ${mi===0?'data-db="modules"':''}><b>${esc(m.t)}</b>
+      ${LESSONS.filter(l=>l.mi===mi).map(l=>{const i=LESSONS.indexOf(l);return `<button class="lesson ${l.done?'done':''}" data-i="${i}" ${i===current?'aria-current="true"':''}><span class="dot"></span><span style="flex:1">${esc(l.title)}</span>${l.local?'<span class="tag pays">'+country+'</span>':''}<span class="muted num">${l.min}′</span></button>`}).join('')}
+    </div>`).join('')}
+  </aside>
+  <div class="content">
+    <div class="row" style="justify-content:space-between">
+      <div style="min-width:0"><p class="muted" data-db="modules.title">${esc(L.mod)}</p><h2 data-db="lesson_variants.title (par langue)">${esc(L.title)}</h2></div>
+      <div class="row">${L.local?`<span class="pill cu">Couche ${esc(C().name)}</span>`:'<span class="pill used">Tronc commun</span>'}<span class="pill ${L.done?'ok':'used'}">${L.done?'Vue':'À voir'}</span></div>
+    </div>
+    <div class="player" data-db="lesson_media.bunny_video_id (+ piste par langue)">
+      <div class="screen" id="scr">
+        <svg class="kiln" viewBox="0 0 220 150" aria-hidden="true"><path d="M50 140 70 50h80l20 90z" fill="#2a2f2b" stroke="#4a524c"/><rect x="62" y="40" width="96" height="14" rx="3" fill="#3a413c"/><path d="M95 40c-6-14 8-18 2-32M120 40c-6-14 8-18 2-32" stroke="rgba(238,242,236,.35)" stroke-width="3" fill="none"/><path d="M80 120q30-30 60 0" fill="#E0935A" opacity=".7"/><path d="M90 125q20-22 40 0" fill="#ffd27a" opacity=".8"/></svg>
+        <span class="langbadge">${C().langs[0]} · sous-titres ${C().langs.join('/')}</span>
+        <span class="loopbadge" id="loopBadge" hidden>Répétition A → B</span>
+        <button class="big" id="bigPlay" aria-label="Lecture"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+        <span class="subs" id="subs" data-db="lesson_media.captions (.vtt par langue)"></span>
+      </div>
+      <div class="timeline" id="tl" role="slider" aria-label="Position" tabindex="0"><div class="track"></div><div class="loop" id="loopZone" hidden></div><div class="fill" id="fill"></div>${CHAPTERS.map(c=>`<span class="chap" style="left:${c[1]*100}%"></span>`).join('')}<div class="knob" id="knob"></div></div>
+      <div class="controls">
+        <button id="pp">Lecture</button><button id="back">−10 s</button><button id="fwd">+10 s</button>
+        <span class="time" id="time"></span><span class="grow"></span>
+        <button id="ab" aria-pressed="false">Répéter un passage</button>
+        <select id="spd" aria-label="Vitesse">${[.5,.75,1,1.25,1.5,2].map(s=>`<option value="${s}" ${s===1?'selected':''}>×${String(s).replace('.',',')}</option>`).join('')}</select>
+        <select id="aud" aria-label="Langue audio">${C().langs.map(l=>`<option>Audio ${l}</option>`).join('')}</select>
+        <button id="mute">Son</button><input type="range" id="vol" min="0" max="1" step=".05" value=".8" aria-label="Volume">
+        <button id="cc" aria-pressed="true">Sous-titres</button>
+        <select id="q" aria-label="Qualité"><option>Auto</option><option>720p</option><option>360p (réseau faible)</option><option>Télécharger hors ligne</option></select>
+        <button id="fs">Plein écran</button>
+      </div>
+    </div>
+    <div class="chapters" data-db="lessons.chapters">${CHAPTERS.map((c,i)=>`<button data-c="${i}">${fmt(c[1]*L.min*60)} · ${c[0]}</button>`).join('')}</div>
+    <div class="row">
+      <button class="btn ${L.done?'btn-ghost':'btn-primary'} btn-small" id="markDone" data-db="lesson_progress + attendance.minutes">${L.done?'Vue ✓':'Marquer comme vue'}</button>
+      ${current<LESSONS.length-1?'<button class="btn btn-ghost btn-small" id="next">Leçon suivante</button>':''}
+      ${L.quiz?'<a class="btn btn-ghost btn-small" href="#quiz">Évaluation du module</a>':''}
+    </div>
+    <div class="tabs" role="tablist" id="ltabs">
+      <button role="tab" data-t="cours" aria-selected="true">Le cours</button>
+      <button role="tab" data-t="pays" aria-selected="false">Au ${esc(C().name)}</button>
+      <button role="tab" data-t="data" aria-selected="false">Données du pilote</button>
+      <button role="tab" data-t="fiche" aria-selected="false">Fiche protocole</button>
+      <button role="tab" data-t="notes" aria-selected="false">Mes notes</button>
+      <button role="tab" data-t="qa" aria-selected="false">Questions au formateur</button>
+    </div>
+    <div id="tabBody"></div>
+  </div>
+</div>`};
+const TABS={
+  cours:L=>`<div class="panel stack" data-db="lesson_variants.body"><p>Cette leçon montre <b>${esc(L.title.toLowerCase())}</b> sur le four 4 m³ à post-combustion, avec les gestes de sécurité et les erreurs fréquentes.</p><p class="muted">Référent du pôle : chef opérationnel pyrolyse (20 ans d'expérience) et ingénieur chimiste.</p></div>`,
+  pays:L=>`<div class="panel stack" data-db="country_profiles (fiche pays)"><span class="kicker">Couche pays · ${esc(C().name)}</span><p><b>Réglementation :</b> ${esc(C().reg)}</p><p><b>Gisements et contexte local :</b> ${esc(C().local)}</p><p><b>Partenaire :</b> ${esc(C().org)} · <b>Monnaie :</b> ${esc(C().money)}</p><p class="hint">Fiche générée depuis MNEMOSYNE (203 pays), relue par le partenaire local.</p></div>`,
+  data:L=>`<div class="stack" data-db="pilot_datasets (données réelles REKARBON)"><p class="muted">Exercice : à partir des mesures réelles des fournées du site ${esc(C().site)}, repérez le lot qu'il faut encore prélever.</p><div class="datagrid"><table><thead><tr><th>Lot</th><th>Biomasse</th><th>T° max</th><th>Volume</th><th>Biochar</th><th>Analyse</th><th>État</th></tr></thead><tbody>${PILOT.map(r=>`<tr>${r.map((c,i)=>`<td class="${i===0?'code':'num'}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`,
+  fiche:L=>`<div class="row notice" data-db="lesson_media.pdf_path"><span class="mono" style="background:var(--forest);color:var(--forest-ink);padding:14px 10px;border-radius:4px">PDF</span><div class="stack" style="gap:2px;flex:1;min-width:0"><b>Protocole · ${esc(L.title)}</b><span class="hint">2 pages · ${C().langs.join(' / ')}</span></div><button class="btn btn-ghost btn-small" id="dl">Ouvrir</button></div>`,
+  notes:L=>`<div class="stack" data-db="lesson_notes"><label for="note">Mes notes</label><textarea id="note" placeholder="Ex. : humidité < 20 % avant chargement"></textarea><p class="hint">Visibles par vous seul·e. Enregistrées automatiquement.</p></div>`,
+  qa:L=>`<div class="stack" data-db="lesson_questions"><div class="notice"><b>Stagiaire exemple 2</b> <span class="hint">hier</span><p>La fumée reste blanche après 20 minutes, c'est normal ?</p><p style="margin-top:6px;padding-left:12px;border-left:2px solid var(--copper)"><b>Formateur :</b> non, le lot est trop humide. Arrêtez et refaites un contrôle d'humidité.</p></div><label for="qIn">Poser une question</label><textarea id="qIn"></textarea><button class="btn btn-primary btn-small" id="qSend" style="justify-self:start">Envoyer</button></div>`
+};
+AFTER.lecon=()=>{
+  const L=LESSONS[current];P={t:0,dur:L.min*60,playing:false,speed:1,loop:null,loopA:null,subs:true,timer:null};
+  document.querySelectorAll('.lesson').forEach(b=>b.onclick=()=>{current=+b.dataset.i;render()});
+  const draw=()=>{const r=P.t/P.dur*100;$('#fill').style.width=r+'%';$('#knob').style.left=r+'%';$('#time').textContent=fmt(P.t)+' / '+fmt(P.dur);
+    const ch=CHAPTERS.reduce((a,c,i)=>P.t/P.dur>=c[1]?i:a,0);$('#subs').textContent=SUBS[ch];$('#subs').hidden=!P.subs;
+    $('#pp').textContent=P.playing?'Pause':'Lecture';$('#bigPlay').hidden=P.playing;
+    const lz=$('#loopZone');if(P.loop){lz.hidden=false;lz.style.left=P.loop[0]/P.dur*100+'%';lz.style.width=(P.loop[1]-P.loop[0])/P.dur*100+'%'}else lz.hidden=true;$('#loopBadge').hidden=!P.loop};
+  const tick=()=>{P.t+=2*P.speed;if(P.loop&&P.t>=P.loop[1])P.t=P.loop[0];if(P.t>=P.dur){P.t=P.dur;toggle(false)}draw()};
+  const toggle=on=>{P.playing=on??!P.playing;clearInterval(P.timer);if(P.playing)P.timer=setInterval(tick,250);draw()};
+  $('#pp').onclick=()=>toggle();$('#bigPlay').onclick=()=>toggle(true);
+  $('#back').onclick=()=>{P.t=Math.max(0,P.t-10);draw()};$('#fwd').onclick=()=>{P.t=Math.min(P.dur,P.t+10);draw()};
+  $('#tl').onclick=e=>{const r=$('#tl').getBoundingClientRect();P.t=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width))*P.dur;draw()};
+  $('#tl').onkeydown=e=>{if(e.key==='ArrowRight'){P.t=Math.min(P.dur,P.t+5);draw()}if(e.key==='ArrowLeft'){P.t=Math.max(0,P.t-5);draw()}};
+  $('#spd').onchange=e=>{P.speed=+e.target.value;toast('Vitesse ×'+String(P.speed).replace('.',','))};
+  $('#aud').onchange=e=>toast(e.target.value);
+  $('#ab').onclick=()=>{const b=$('#ab');
+    if(P.loop){P.loop=null;b.setAttribute('aria-pressed','false');b.textContent='Répéter un passage';toast('Répétition arrêtée')}
+    else if(P.loopA==null){P.loopA=P.t;b.setAttribute('aria-pressed','true');b.textContent='Fin du passage ?';toast('Début marqué. Avancez puis cliquez à nouveau.')}
+    else{const a=P.loopA;P.loop=[a,Math.min(Math.max(P.t,a+5),P.dur)];P.loopA=null;b.textContent='Arrêter la répétition';P.t=a;toast('Le passage se répète');toggle(true)}draw()};
+  $('#mute').onclick=()=>{const m=$('#mute').textContent==='Son';$('#mute').textContent=m?'Son coupé':'Son';$('#vol').value=m?0:.8};
+  $('#cc').onclick=()=>{P.subs=!P.subs;$('#cc').setAttribute('aria-pressed',P.subs);draw()};
+  $('#q').onchange=e=>toast(e.target.value.startsWith('Télécharger')?'Vidéo gardée sur le téléphone pour le terrain sans réseau':'Qualité : '+e.target.value);
+  $('#fs').onclick=()=>{const el=document.querySelector('.player');if(el.requestFullscreen)el.requestFullscreen().catch(()=>toast('Plein écran indisponible ici'));else toast('Plein écran indisponible ici')};
+  document.querySelectorAll('.chapters button').forEach(b=>b.onclick=()=>{P.t=CHAPTERS[+b.dataset.c][1]*P.dur;toggle(true)});
+  $('#markDone').onclick=()=>{L.done=!L.done;toast(L.done?'Leçon vue, '+L.min+' min ajoutées à vos heures':'Leçon remise à voir');render()};
+  const nx=$('#next');if(nx)nx.onclick=()=>{current++;render()};
+  const show=t=>{document.querySelectorAll('#ltabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===t));$('#tabBody').innerHTML=TABS[t](L);
+    if(t==='fiche')$('#dl').onclick=()=>toast('Dans la vraie version, la fiche s’ouvre ici');
+    if(t==='notes'){const k='rkb-note-'+L.id;try{$('#note').value=localStorage.getItem(k)||''}catch(_){};$('#note').oninput=e=>{try{localStorage.setItem(k,e.target.value)}catch(_){}}}
+    if(t==='qa')$('#qSend').onclick=()=>{if(!$('#qIn').value.trim())return toast('Écrivez votre question');$('#qIn').value='';toast('Question envoyée au formateur')}};
+  document.querySelectorAll('#ltabs button').forEach(b=>b.onclick=()=>show(b.dataset.t));show('cours');draw();
+};
+
+/* ---------- Stagiaire : évaluation ---------- */
+VIEWS.quiz=()=>`<div class="card stack quiz" style="max-width:760px;margin:0 auto" data-db="quizzes + quiz_questions">
+  <span class="kicker">Pôle 1 · Module Pyrolyse · Évaluation</span>
+  <h1 style="font-size:1.9rem">Vérifiez vos acquis</h1>
+  <p class="muted">3 questions. Il faut 2 bonnes réponses pour valider le module. Les tentatives sont gardées pour le suivi Qualiopi.</p>
+  <form id="qz" class="stack">
+    ${QUIZ.map((q,i)=>`<fieldset class="stack" style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:8px">${i+1}. ${esc(q.q)}</legend>
+      ${q.o.map((o,j)=>`<label class="opt" data-q="${i}" data-o="${j}"><input type="radio" name="q${i}" value="${j}"> ${esc(o)}</label>`).join('')}</fieldset>`).join('')}
+    <button class="btn btn-primary" style="justify-self:start">Valider mes réponses</button>
+  </form>
+  <div id="qzRes" class="notice" hidden data-db="quiz_attempts.score"></div>
+</div>`;
+AFTER.quiz=()=>{$('#qz').onsubmit=e=>{e.preventDefault();let s=0;
+  QUIZ.forEach((q,i)=>{const v=document.querySelector(`input[name=q${i}]:checked`);document.querySelectorAll(`.opt[data-q="${i}"]`).forEach(l=>{l.classList.remove('right','wrong');if(+l.dataset.o===q.a)l.classList.add('right');else if(v&&+v.value===+l.dataset.o)l.classList.add('wrong')});if(v&&+v.value===q.a)s++});
+  const r=$('#qzRes');r.hidden=false;r.innerHTML=s>=2?`<b>${s}/3 : module validé.</b> Il compte pour votre attestation.`:`<b>${s}/3 : pas encore.</b> Revoyez les leçons en vert puis réessayez.`;}};
+
+/* ---------- Stagiaire : attestation ---------- */
+VIEWS.attestation=()=>`<div class="cert" data-db="certificates (PDF signé + numéro vérifiable)">
+  <span class="kicker">Attestation de fin de formation</span>
+  <h1>Pôle 0 · Comprendre le marché du carbone</h1>
+  <p>Délivrée à <b>Test</b> pour le suivi complet du module, en ${esc(C().lang.split(' / ')[0])}, territoire <b>${esc(C().name)}</b>.</p>
+  <div class="grid">
+    <div class="stat"><b class="num">50 h</b><span class="muted">de formation</span></div>
+    <div class="stat"><b class="num">16/20</b><span class="muted">évaluation finale</span></div>
+    <div class="stat"><b class="num">100 %</b><span class="muted">présence émargée</span></div>
+  </div>
+  <p class="hint">Organisme : ${esc(C().of)} · Contenus : REKARBON · N° de vérification <span class="mono">RKB-${country}-2027-000184</span></p>
+  <div class="row"><button class="btn btn-primary" id="dlc">Télécharger le PDF</button><button class="btn btn-ghost" id="vrf">Lien de vérification</button></div>
+</div>`;
+AFTER.attestation=()=>{$('#dlc').onclick=()=>toast('Dans la vraie version, le PDF signé se télécharge ici');$('#vrf').onclick=()=>toast('Un employeur vérifie l’attestation avec son numéro')};
+
+/* ---------- Référentiel des métiers ---------- */
+let MF={d:'',n:'',f:'',q:'',g:false,sel:null};
+const metiersBody=()=>`
+<div class="stack" style="gap:22px">
+  <div class="stack" style="gap:6px"><span class="kicker">Référentiel des métiers du carbone</span><h1>${METIERS.length} métiers, ${DOMAINES.length} domaines, ${POLES.length} pôles</h1>
+  <p class="muted" style="max-width:60em">Chaque métier est un assemblage de pôles. La plateforme en fait un parcours, avec une attestation au nom du métier. Le parcours 600 h vise d'abord les opérateurs et techniciens de terrain ; les profils ingénieurs et cadres passent par des modules de formation continue.</p></div>
+  <div class="hours">
+    ${[1,2,3,4].map(n=>`<div class="stat"><b class="num">${METIERS.filter(m=>m.n===n).length}</b><span class="muted">${NIV[n].toLowerCase()}s</span></div>`).join('')}
+    <div class="stat"><b class="num">${METIERS.filter(m=>m.guyane).length}</b><span class="muted">créés sur place par les pilotes</span></div>
+  </div>
+  <div class="card stack" data-db="job_roles × courses (matrice)">
+    <div class="row" style="justify-content:space-between"><h3>Quels pôles forment quels domaines</h3><span class="hint">Nombre de métiers du domaine qui passent par le pôle</span></div>
+    <div class="tbl-wrap"><table class="matrix"><thead><tr><th>Domaine</th>${POLES.map(p=>`<th title="${esc(p.t)}" style="text-align:center">${p.n}${p.nw?'*':''}</th>`).join('')}</tr></thead><tbody>
+    ${DOMAINES.map(([k,lab,col])=>`<tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${col};margin-right:8px"></span>${lab}</td>${POLES.map(p=>{const c=METIERS.filter(m=>m.d===k&&m.p.includes(p.n)).length;return `<td class="num" style="text-align:center;background:${c?`color-mix(in srgb,${p.c} ${Math.min(85,c*14)}%,transparent)`:'transparent'};color:${c>3?'#fff':'inherit'}">${c||''}</td>`}).join('')}</tr>`).join('')}
+    </tbody></table></div>
+    <p class="hint">* Pôles proposés : 8 « Mer et carbone bleu », 9 « Comptabilité carbone et RSE ».</p>
+  </div>
+  <div class="card stack">
+    <div class="row">
+      <div style="flex:2;min-width:200px"><label for="mq">Chercher un métier</label><input id="mq" type="text" placeholder="Ex. : pyrolyse, mangrove, CSRD" value="${esc(MF.q)}"></div>
+      <div style="flex:1;min-width:150px"><label for="mn">Niveau</label><select id="mn"><option value="">Tous</option>${[1,2,3,4].map(n=>`<option value="${n}" ${MF.n==n?'selected':''}>${NIV[n]}</option>`).join('')}</select></div>
+      <div style="flex:1;min-width:150px"><label for="mf">Format</label><select id="mf"><option value="">Tous</option>${Object.entries(FMT).map(([k,v])=>`<option value="${k}" ${MF.f===k?'selected':''}>${v}</option>`).join('')}</select></div>
+      <label style="margin:0;align-self:flex-end;padding-bottom:10px;font-weight:400"><input type="checkbox" id="mg" ${MF.g?'checked':''}> Emplois créés par les pilotes</label>
+    </div>
+    <div class="row chips" role="group" aria-label="Domaines"><button data-d="" aria-pressed="${!MF.d}">Tous les domaines</button>${DOMAINES.map(([k,lab])=>`<button data-d="${k}" aria-pressed="${MF.d===k}">${lab}</button>`).join('')}</div>
+  </div>
+  <div id="mlist" class="mgrid"></div>
+</div>`;
+function drawMetiers(){
+  const q=MF.q.toLowerCase();
+  const list=METIERS.map((m,i)=>({...m,i})).filter(m=>(!MF.d||m.d===MF.d)&&(!MF.n||m.n==MF.n)&&(!MF.f||m.f.includes(MF.f))&&(!MF.g||m.guyane)&&(!q||m.t.toLowerCase().includes(q)||m.p.some(n=>PH(n).t.toLowerCase().includes(q))));
+  const dom=k=>DOMAINES.find(d=>d[0]===k);
+  $('#mlist').innerHTML=list.length?list.map(m=>{const h=m.p.reduce((s,n)=>s+PH(n).h,0);const open=MF.sel===m.i;return `
+  <article class="card mcard ${open?'open':''}" ${m.i===21?'data-db="job_roles (métier → pôles, niveau, formats)"':''}>
+    <div class="row" style="justify-content:space-between;gap:6px"><span class="kicker" style="margin:0;color:${dom(m.d)[2]}">${esc(dom(m.d)[1])}</span>${m.guyane?'<span class="pill ok">Emploi pilote</span>':''}</div>
+    <h3>${esc(m.t)}</h3>
+    <div class="row" style="gap:6px"><span class="pill used">${NIV[m.n]}</span>${m.f.map(f=>`<span class="tag">${FMT[f]}</span>`).join('')}</div>
+    <div class="row" style="gap:4px">${m.p.map(n=>`<span class="pchip" style="background:${PH(n).c}" title="${esc(PH(n).t)}">${n}</span>`).join('')}<span class="hint num" style="margin-left:6px">${h} h de pôles</span></div>
+    ${open?`<div class="stack" style="gap:8px;border-top:1px solid var(--line);padding-top:10px">${m.p.map(n=>`<div class="row" style="justify-content:space-between"><span><span class="mono" style="color:var(--copper)">PÔLE ${n}</span> ${esc(PH(n).t)}</span><span class="mono">${PH(n).h} h</span></div>`).join('')}
+      <p class="hint">Attestation : « ${esc(m.t)} », délivrée par ${esc(C().of)}.</p>
+      <div class="row"><button class="btn btn-primary btn-small" data-enrol="${m.i}">S'inscrire à ce parcours</button><button class="btn btn-ghost btn-small" data-close>Fermer</button></div></div>`
+    :`<button class="btn btn-ghost btn-small" style="justify-self:start" data-open="${m.i}">Voir le parcours</button>`}
+  </article>`}).join(''):'<p class="muted">Aucun métier ne correspond à ces filtres.</p>';
+  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{MF.sel=+b.dataset.open;drawMetiers()});
+  document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{MF.sel=null;drawMetiers()});
+  document.querySelectorAll('[data-enrol]').forEach(b=>b.onclick=()=>toast('Demande d’inscription envoyée (maquette)'));
+}
+function bindMetiers(){
+  $('#mq').oninput=e=>{MF.q=e.target.value;drawMetiers()};
+  $('#mn').onchange=e=>{MF.n=e.target.value;drawMetiers()};
+  $('#mf').onchange=e=>{MF.f=e.target.value;drawMetiers()};
+  $('#mg').onchange=e=>{MF.g=e.target.checked;drawMetiers()};
+  document.querySelectorAll('.chips button').forEach(b=>b.onclick=()=>{MF.d=b.dataset.d;document.querySelectorAll('.chips button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawMetiers()});
+  drawMetiers();
+}
+VIEWS.metiers=metiersBody;AFTER.metiers=bindMetiers;
+VIEWS['admin-metiers']=()=>shell('admin-metiers',metiersBody()+`<div class="card stack" style="margin-top:6px"><h3>Points à valider</h3><ul style="margin:0;padding-left:18px;color:var(--muted)"><li>Valider la liste avec les experts référents de chaque pôle.</li><li>Choisir les 5 à 10 métiers prioritaires pour la Guyane.</li><li>Rattacher chaque métier prioritaire à une certification nationale existante (RNCP ou Répertoire spécifique) quand elle existe.</li></ul></div>`);
+AFTER['admin-metiers']=bindMetiers;
+
+/* ---------- Habilitations, protocole terrain, conformité ---------- */
+const HABS=[
+  {k:'four',t:'Conduite du four 4 m³',m:'Opérateur de pyrolyse',req:['Pôle 1 · module Pyrolyse validé','Évaluation sécurité ICPE ≥ 8/10','5 fournées supervisées'],st:'ok',until:'11 nov. 2027',sup:'5 / 5'},
+  {k:'lot',t:'Prélèvement et traçabilité d’un lot',m:'Technicien qualité',req:['Pôle 1 · module Qualité validé','Pôle 6 · module Traçabilité validé','3 prélèvements supervisés'],st:'progress',until:'',sup:'2 / 3'},
+  {k:'capteur',t:'Installation de capteurs et unité edge',m:'Technicien capteurs',req:['Pôle 6 validé','Formation électrique de base','2 installations supervisées'],st:'locked',until:'',sup:'0 / 2'},
+  {k:'formateur',t:'Formateur relais',m:'Formateur aux métiers du carbone',req:['Habilitation métier depuis 6 mois','Module « former à son tour » (14 h)','Une session co-animée avec REKARBON'],st:'locked',until:'',sup:'0 / 1'}
+];
+VIEWS.habilitations=()=>`<div class="stack" style="gap:22px">
+  <div class="stack" style="gap:6px"><span class="kicker">Habilitations · ${esc(C().name)}</span><h1>Ce que vous avez le droit de faire sur site</h1>
+  <p class="muted" style="max-width:62em">Une attestation dit que vous avez suivi la formation. Une habilitation dit que vous pouvez faire le geste sur un site REKARBON. Sans habilitation valide, la plateforme refuse vos saisies : c'est ce qui garantit à l'acheteur de crédits que chaque mesure vient d'une personne formée et vérifiée.</p></div>
+  <div class="mgrid" data-db="certifications (habilitations : personne × geste × validité)">
+  ${HABS.map(h=>`<article class="card mcard">
+    <div class="row" style="justify-content:space-between"><span class="kicker" style="margin:0">${esc(h.m)}</span><span class="pill ${h.st==='ok'?'ok':h.st==='progress'?'warn':'used'}">${h.st==='ok'?'Valide':h.st==='progress'?'En cours':'Non commencée'}</span></div>
+    <h3>${esc(h.t)}</h3>
+    <ul style="margin:0;padding-left:18px;font-size:.88rem">${h.req.map((r,i)=>`<li style="color:${h.st==='ok'||(h.st==='progress'&&i<2)?'var(--ok)':'var(--muted)'}">${esc(r)}</li>`).join('')}</ul>
+    <div class="row" style="justify-content:space-between"><span class="hint">Pratique supervisée : <b class="num">${h.sup}</b></span>${h.until?`<span class="hint">Valide jusqu'au ${h.until}</span>`:''}</div>
+    ${h.st==='ok'?'<a class="btn btn-primary btn-small" href="#protocole" style="justify-self:start">Ouvrir le protocole terrain</a>':''}
+  </article>`).join('')}
+  </div>
+  <div class="notice">Renouvellement : chaque habilitation expire au bout d'un an. Elle se renouvelle avec une évaluation courte et une vérification sur site par le formateur relais.</div>
+</div>`;
+
+const STEPS=[
+  ['Identifier le lot','Scanner l’étiquette du big bag ou saisir le numéro','id','RKB-GF-2026-117'],
+  ['Mesurer l’humidité','Humidimètre sur 3 points, moyenne < 20 %','num','17,8 %'],
+  ['Photographier le chargement','Photo horodatée et géolocalisée par l’application','photo','IMG_0412 · 4,9372° N'],
+  ['Relever la température max.','Lue sur le thermocouple du four (450 à 650 °C)','num','612 °C'],
+  ['Peser le biochar produit','Balance étalonnée, poids net','num','1,08 t'],
+  ['Prélever l’échantillon','Sachet scellé, numéro reporté, envoi sous 7 jours','id','ECH-117-A'],
+  ['Signer la fournée','Signature de l’opérateur habilité','sign','Test · habilitation four valide']
+];
+let PS={done:[],sent:false,who:'ok'};
+VIEWS.protocole=()=>`<div class="stack" style="gap:20px">
+  <div class="row" style="justify-content:space-between;align-items:flex-end">
+    <div class="stack" style="gap:6px"><span class="kicker">Protocole terrain · Pilote 2 · ${esc(C().site)}</span><h1>Fournée du jour</h1><p class="muted">Chaque étape est obligatoire. Le bouton d'envoi ne s'active que lorsque tout est fait par une personne habilitée.</p></div>
+    <div class="stack" style="gap:4px"><label for="who" style="margin:0">Démonstration : qui saisit ?</label><select id="who" style="width:auto"><option value="ok" ${PS.who==='ok'?'selected':''}>Opérateur habilité</option><option value="no" ${PS.who==='no'?'selected':''}>Personne non habilitée</option></select></div>
+  </div>
+  <div class="app proto">
+    <div class="content" data-db="protocol_runs + protocol_steps (preuves horodatées)">
+      ${STEPS.map((st,i)=>{const d=PS.done.includes(i);const blocked=PS.who==='no';return `<div class="row step-row ${d?'is-done':''}" style="border-bottom:1px solid var(--line);padding-bottom:12px;align-items:flex-start">
+        <span class="dot" style="${d?'background:var(--ok);border-color:var(--ok)':''}"></span>
+        <div class="stack" style="gap:2px;flex:1;min-width:0"><b>${i+1}. ${esc(st[0])}</b><span class="hint">${esc(st[1])}</span>${d?`<span class="mono" style="color:var(--ok)">${esc(st[3])}</span>`:''}</div>
+        ${d?'<span class="pill ok">Fait</span>':`<button class="btn ${blocked?'btn-ghost':'btn-primary'} btn-small" data-step="${i}" ${blocked||PS.sent||(i>0&&!PS.done.includes(i-1))?'disabled':''}>${st[2]==='photo'?'Prendre la photo':st[2]==='sign'?'Signer':'Saisir'}</button>`}
+      </div>`}).join('')}
+      <button class="btn btn-primary" id="send" ${PS.done.length===STEPS.length&&!PS.sent?'':'disabled'} style="justify-self:start">Valider et envoyer au registre MRV</button>
+      ${PS.who==='no'?'<p class="err">Saisie bloquée : cette personne n’a pas l’habilitation « Conduite du four 4 m³ ». Elle doit terminer sa formation et ses fournées supervisées.</p>':''}
+    </div>
+    <aside>
+      <b>Ce qui part vers l'acheteur de crédits</b>
+      <div class="notice mono" id="proof" style="white-space:pre-wrap;font-size:.78rem">${PS.sent?proofText():'En attente : '+(STEPS.length-PS.done.length)+' étape(s) à faire.'}</div>
+      <p class="hint">Chaque fournée envoyée porte le nom de l'opérateur, son numéro d'habilitation, les preuves de chaque étape et une signature numérique. Une fournée incomplète ne génère aucun crédit.</p>
+    </aside>
+  </div>
+</div>`;
+function proofText(){return `Lot           RKB-GF-2026-117
+Opérateur     Test (habilitation FOUR-GF-0042, valide)
+Humidité      17,8 %   ✓ < 20 %
+T° max        612 °C   ✓ 450–650 °C
+Biochar       1,08 t
+Échantillon   ECH-117-A  (analyse avant J+7)
+Photos        1 · horodatée, géolocalisée
+Protocole     PYRO-4M3 v2.1 · 7/7 étapes
+Signature     ed25519 · 9f3a…c71e
+Statut        CONFORME → registre MRV`}
+AFTER.protocole=()=>{
+  $('#who').onchange=e=>{PS={done:[],sent:false,who:e.target.value};render()};
+  document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{PS.done.push(+b.dataset.step);render()});
+  const sd=$('#send');if(sd)sd.onclick=()=>{PS.sent=true;toast('Fournée conforme envoyée au registre MRV');render()};
+};
+
+const TERR=[['Guyane','CTG + organisme Qualiopi',3,24,4,'GF'],['Côte d’Ivoire','Partenaire opérationnel (Man)',2,12,2,'CI'],['La Réunion','Organisme Qualiopi',1,6,1,'RE'],['Vietnam','Partenaires de Ben Tre',1,4,0,'VN'],['Indonésie','Syndicat cacao',0,0,0,'ID']];
+VIEWS['admin-deploiement']=()=>shell('admin-deploiement',`<h2>Déploiement par territoire</h2>
+<p class="muted">Plus on forme, plus on duplique. REKARBON forme les formateurs relais ; chaque partenaire forme ensuite ses techniciens ; chaque technicien habilité peut faire tourner une unité.</p>
+<div class="cascade" data-db="vue deployment_by_country">
+  <div><b class="num">1</b><span>REKARBON<br>contenus, plateforme, protocoles</span></div><i>→</i>
+  <div><b class="num">${TERR.reduce((a,t)=>a+t[2],0)}</b><span>formateurs relais<br>chez les partenaires</span></div><i>→</i>
+  <div><b class="num">${TERR.reduce((a,t)=>a+t[3],0)}</b><span>techniciens<br>habilités</span></div><i>→</i>
+  <div><b class="num">${TERR.reduce((a,t)=>a+t[4],0)}</b><span>unités<br>en fonctionnement</span></div>
+</div>
+<div class="tbl-wrap"><table><thead><tr><th>Territoire</th><th>Partenaire opérationnel</th><th>Formateurs relais</th><th>Techniciens habilités</th><th>Unités</th><th>Capacité</th><th>Langue</th></tr></thead><tbody>
+${TERR.map(t=>`<tr><td><b>${t[0]}</b></td><td>${esc(t[1])}</td><td class="num">${t[2]}</td><td class="num">${t[3]}</td><td class="num">${t[4]}</td><td style="min-width:150px"><div class="bar"><i style="width:${Math.min(100,t[3]/30*100)}%"></i></div><span class="hint num">${Math.floor(t[3]/6)} unité(s) possibles (6 techniciens / unité)</span></td><td>${COUNTRY[t[5]].langs.join(', ')}</td></tr>`).join('')}
+</tbody></table></div>
+<p class="hint">Hypothèse de démonstration : 6 techniciens habilités par unité (2 équipes de 3). À remplacer par les chiffres réels des pilotes.</p>`);
+
+const LOTS=[['RKB-GF-2026-114','Opérateur exemple 1','FOUR-GF-0031','7/7','Conforme','ok'],['RKB-GF-2026-115','Opérateur exemple 2','FOUR-GF-0038','6/7 · photo manquante','À compléter','warn'],['RKB-CI-2026-009','Opérateur exemple 3','—','5/7','Rejeté : non habilité','cu'],['RKB-GF-2026-116','Opérateur exemple 1','FOUR-GF-0031','7/7 · échantillon à J+9','Hors délai','cu'],['RKB-RE-2026-021','Opérateur exemple 4','FOUR-RE-0004','7/7','Conforme','ok']];
+VIEWS['admin-conformite']=()=>shell('admin-conformite',`<h2>Conformité des données</h2>
+<p class="muted">Seuls les lots conformes partent vers la vérification et les crédits. Chaque écart remonte au territoire, au partenaire et à la personne, pour corriger par la formation plutôt que de perdre des crédits.</p>
+<div class="hours">
+  <div class="stat"><b class="num">94 %</b><span class="muted">lots conformes ce mois</span></div>
+  <div class="stat"><b class="num">100 %</b><span class="muted">saisies par des personnes habilitées</span></div>
+  <div class="stat"><b class="num">2</b><span class="muted">lots exclus des crédits</span></div>
+  <div class="stat"><b class="num">1</b><span class="muted">formation de rappel déclenchée</span></div>
+</div>
+<div class="tbl-wrap" data-db="protocol_runs.status → mrv_registry"><table><thead><tr><th>Lot</th><th>Opérateur</th><th>Habilitation</th><th>Étapes</th><th>Statut</th><th>Action</th></tr></thead><tbody>
+${LOTS.map(l=>`<tr><td class="code">${l[0]}</td><td>${l[1]}</td><td class="code">${l[2]}</td><td>${l[3]}</td><td><span class="pill ${l[5]}">${l[4]}</span></td><td>${l[5]==='ok'?'<span class="hint">Envoyé au registre</span>':l[4].startsWith('Rejeté')?'<button class="btn btn-ghost btn-small" data-act>Proposer la formation</button>':'<button class="btn btn-ghost btn-small" data-act>Relancer l’opérateur</button>'}</td></tr>`).join('')}
+</tbody></table></div>
+<div class="card stack"><h3>Règles appliquées partout</h3><ul style="margin:0;padding-left:18px;color:var(--muted)">
+<li>Une saisie n'est acceptée que si son auteur a une habilitation valide pour ce geste.</li>
+<li>Toutes les étapes du protocole sont obligatoires, dans l'ordre, avec une preuve horodatée.</li>
+<li>Les protocoles sont versionnés : tous les territoires appliquent la même version.</li>
+<li>Chaque fournée est signée numériquement : la donnée ne peut plus être modifiée après envoi.</li>
+<li>Un écart déclenche une action de formation pour la personne ou l'équipe concernée.</li></ul></div>`);
+AFTER['admin-conformite']=()=>document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>toast('Action envoyée au partenaire (maquette)'));
+
+VIEWS['admin-habilitations']=()=>shell('admin-habilitations',`<h2>Habilitations</h2>
+<p class="muted">Chaque métier débloque des gestes précis. Une habilitation combine formation validée, évaluation et pratique supervisée, et expire au bout d'un an.</p>
+<div class="tbl-wrap" data-db="certification_rules + certifications"><table><thead><tr><th>Habilitation</th><th>Métier</th><th>Conditions</th><th>Personnes habilitées</th><th>Expirent sous 30 j</th></tr></thead><tbody>
+${HABS.map((h,i)=>`<tr><td><b>${esc(h.t)}</b></td><td>${esc(h.m)}</td><td style="white-space:normal;min-width:260px">${h.req.map(esc).join(' · ')}</td><td class="num">${[18,11,7,4][i]}</td><td class="num">${[2,1,0,0][i]}</td></tr>`).join('')}
+</tbody></table></div>`);
+
+/* ---------- Référent partenaire ---------- */
+VIEWS.ref=()=>`<div class="stack" style="gap:22px">
+  <div class="stack" style="gap:4px"><span class="kicker">Espace référent · ${esc(C().org)}</span><h1>Suivi de vos stagiaires</h1><p class="muted">Vous voyez uniquement les personnes de votre organisation : heures, présence, résultats.</p></div>
+  <div class="hours">
+    <div class="stat" data-db="organizations + memberships"><b class="num">5</b><span class="muted">stagiaires</span></div>
+    <div class="stat" data-db="access_codes (lot de l'organisation)"><b class="num">12</b><span class="muted">codes encore disponibles</span></div>
+    <div class="stat" data-db="attendance"><b class="num">88 %</b><span class="muted">présence moyenne</span></div>
+    <div class="stat" data-db="funding (financeur)"><b class="num">CTG</b><span class="muted">financeur principal</span></div>
+  </div>
+  <div class="tbl-wrap" data-db="vue org_progress"><table><thead><tr><th>Stagiaire</th><th>Groupe</th><th>Parcours</th><th>Heures</th><th>Présence</th><th>Moyenne</th></tr></thead><tbody>
+  ${TRAINEES.map(t=>`<tr><td>${t[0]}</td><td>${t[1]}</td><td>${t[2]}</td><td class="num" style="min-width:140px"><div class="bar"><i style="width:${t[3]/t[4]*100}%"></i></div>${t[3]} / ${t[4]} h</td><td class="num">${t[5]}</td><td class="num">${t[6]==null?'—':String(t[6]).replace('.',',')+'/20'}</td></tr>`).join('')}
+  </tbody></table></div>
+  <div class="row"><button class="btn btn-primary btn-small" id="rx">Exporter pour le financeur</button><button class="btn btn-ghost btn-small" id="rc">Distribuer des codes</button></div>
+</div>`;
+AFTER.ref=()=>{$('#rx').onclick=()=>toast('Export des heures et de l’émargement (maquette)');$('#rc').onclick=()=>toast('Les codes du lot s’affichent ici pour être envoyés')};
+
+/* ---------- Back-office REKARBON ---------- */
+const ADMIN=[['sep','Pilotage'],['admin','Tableau de bord'],['admin-deploiement','Déploiement par territoire'],['admin-promos','Promotions et partenaires'],['admin-codes','Codes d’accès'],['sep','Contenus'],['admin-metiers','Référentiel métiers'],['admin-parcours','Pôles et leçons'],['admin-pays','Territoires et langues'],['admin-evals','Évaluations'],['sep','Qualité et traçabilité'],['admin-conformite','Conformité des données'],['admin-habilitations','Habilitations'],['admin-emargement','Heures et émargement'],['admin-satisfaction','Satisfaction']];
+const shell=(h,body)=>`<div class="admin"><aside>${ADMIN.map(([k,t])=>k==='sep'?`<span class="sep">${t}</span>`:`<a href="#${k}" ${k===h?'aria-current="page"':''}>${t}</a>`).join('')}</aside><div class="content">${body}</div></div>`;
+VIEWS.admin=()=>shell('admin',`<h2>École REKARBON</h2>
+<div class="hours">
+  <div class="stat" data-db="organizations"><b class="num">5</b><span class="muted">territoires actifs</span></div>
+  <div class="stat" data-db="cohorts"><b class="num">3</b><span class="muted">promotions en cours</span></div>
+  <div class="stat" data-db="enrollments"><b class="num">47</b><span class="muted">stagiaires</span></div>
+  <div class="stat" data-db="attendance"><b class="num">9 412 h</b><span class="muted">de formation réalisées</span></div>
+  <div class="stat" data-db="certificates"><b class="num">18</b><span class="muted">attestations délivrées</span></div>
+</div>
+<div class="card stack"><h3>Calendrier</h3><div class="tbl-wrap"><table><thead><tr><th>Période</th><th>Étape</th><th>État</th></tr></thead><tbody>
+<tr><td>Janv. → mars 2027</td><td>Programme complet + modules socle carbone et opérateur biochar</td><td><span class="pill warn">En conception</span></td></tr>
+<tr><td>Avr. → juin 2027</td><td>Pôles sols, ERW, mangroves</td><td><span class="pill used">À venir</span></td></tr>
+<tr><td>Mai → sept. 2027</td><td>Première promotion du parcours 600 h</td><td><span class="pill used">À venir</span></td></tr>
+<tr><td>2029</td><td>Stagiaires formés disponibles pour la ligne 1</td><td><span class="pill used">Objectif</span></td></tr>
+</tbody></table></div></div>`);
+VIEWS['admin-promos']=()=>shell('admin-promos',`<h2>Promotions et partenaires</h2>
+<form class="gen" id="np" data-db="cohorts + organizations">
+  <div><label for="pn">Promotion</label><input id="pn" type="text" value="Guyane, parcours métier 2027"></div>
+  <div><label for="po">Partenaire</label><input id="po" type="text" value="${esc(C().org)}"></div>
+  <div><label for="pf">Format</label><select id="pf">${FORMATS.map(f=>`<option>${f[0]}</option>`).join('')}</select></div>
+  <div><label for="ps">Début</label><input id="ps" type="date"></div>
+  <div><label for="pp">Places</label><input id="pp" type="number" value="15"></div>
+  <div><label for="pfi">Financeur</label><select id="pfi"><option>CTG</option><option>FSE+</option><option>France Travail</option><option>OPCO</option><option>Fonds territorial carbone</option></select></div>
+  <button class="btn btn-primary" style="grid-column:1/-1;justify-self:start">Créer la promotion</button>
+</form>
+<div class="tbl-wrap"><table><thead><tr><th>Promotion</th><th>Partenaire</th><th>Format</th><th>Stagiaires</th><th>Référent</th></tr></thead><tbody>
+<tr><td>Guyane 2027</td><td>Collectivité Territoriale de Guyane</td><td>Parcours métier 600 h</td><td class="num">15</td><td>Invité</td></tr>
+<tr><td>Agents CTG</td><td>Collectivité Territoriale de Guyane</td><td>Module court</td><td class="num">22</td><td>Invité</td></tr>
+<tr><td>Man, cacao</td><td>Syndicats cacao et café</td><td>Module court</td><td class="num">10</td><td>À inviter</td></tr>
+</tbody></table></div>`);
+AFTER['admin-promos']=()=>{$('#np').onsubmit=e=>{e.preventDefault();toast('Promotion créée (maquette)')}};
+VIEWS['admin-codes']=()=>shell('admin-codes',`<h2>Codes d'accès</h2>
+<form class="gen" id="gen" data-db="generate_access_codes()">
+  <div><label for="gC">Parcours</label><select id="gC"><option value="SOC">Module court : marché du carbone</option><option value="OPB">Module court : opérateur biochar</option><option value="SOL">Module court : sols, biochar et ERW</option><option value="M600">Parcours métier 600 h</option></select></div>
+  <div><label for="gO">Organisation</label><select id="gO"><option>CTG · élus</option><option>CTG · pilote 2</option><option>Syndicat cacao Man</option></select></div>
+  <div><label for="gN">Nombre</label><input id="gN" type="number" value="10" min="1" max="50"></div>
+  <div><label for="gD">Durée (jours)</label><input id="gD" type="number" value="180"></div>
+  <div><label for="gL">Langue</label><select id="gL">${C().langs.map(l=>`<option>${l}</option>`).join('')}</select></div>
+  <button class="btn btn-primary">Générer</button>
+</form>
+<div class="tbl-wrap" data-db="access_codes (+ organization_id, country, locale)"><table><thead><tr><th>Code</th><th>Parcours</th><th>Organisation</th><th>Durée</th><th>État</th><th>Activé par</th></tr></thead><tbody id="cb"></tbody></table></div>`);
+const ALPH='ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+AFTER['admin-codes']=()=>{const draw=()=>$('#cb').innerHTML=CODES.map(c=>`<tr><td class="code">${c.code}</td><td>${esc(c.course)}</td><td>${esc(c.org)}</td><td class="num">${c.days} j</td><td><span class="pill ${c.state==='Disponible'?'ok':'used'}">${c.test?'Essai':c.state}</span></td><td class="muted">${esc(c.by)}</td></tr>`).join('');draw();
+  $('#gen').onsubmit=e=>{e.preventDefault();const s=$('#gC'),n=Math.min(50,+$('#gN').value||1);for(let i=0;i<n;i++){let x='';for(let j=0;j<6;j++)x+=ALPH[Math.floor(Math.random()*ALPH.length)];CODES.unshift({code:`RKB-${country}-${s.value}-${x}`,course:s.options[s.selectedIndex].text,org:$('#gO').value,days:+$('#gD').value,state:'Disponible',by:''})}draw();toast(n+' codes générés')}};
+VIEWS['admin-parcours']=()=>shell('admin-parcours',`<h2>Pôles et leçons</h2>
+<div class="layers" data-db="lessons.layer = common | country">
+  <div class="common"><b>Tronc commun · ~70 %</b><p class="hint" style="color:inherit">Principes du carbone, pyrolyse, sécurité, ERW, biodiversité, MRV. Écrit une fois, identique partout.</p></div>
+  <div class="local"><b>Couche ${esc(C().name)} · ~30 %</b><p class="hint" style="color:inherit">Réglementation, gisements, partenaires, prix, langue.</p></div>
+</div>
+${POLES.map((p,i)=>`<details class="ls" ${i===1?'open':''}><summary><span class="mono" style="color:var(--copper)">PÔLE ${p.n}</span><b style="flex:1">${esc(p.t)}</b><span class="mono">${p.h} h</span><span class="pill ${i<2?'ok':p.nw?'cu':'warn'}">${i<2?'Contenu prêt':p.nw?'Proposé':'En conception'}</span></summary>
+ ${i===1?`<div class="stack" style="margin-top:14px">${MODULES.map(m=>`<div class="card stack" style="padding:14px"><div class="row"><b style="flex:1">${esc(m.t)}</b><button class="btn btn-ghost btn-small">↑</button><button class="btn btn-ghost btn-small">↓</button></div>${m.l.map(l=>`<div class="row" style="border-top:1px solid var(--line);padding-top:8px"><span style="flex:1">${esc(l[0])}</span>${l[2]?`<span class="tag pays">${country}</span>`:'<span class="tag">commun</span>'}<span class="pill ok">FR</span>${C().langs.length>1?`<span class="pill warn">${C().langs[1]} à traduire</span>`:''}<button class="btn btn-ghost btn-small" data-up>Vidéo</button></div>`).join('')}</div>`).join('')}
+ <div class="drop" data-db="lesson_media (une vidéo par langue)"><b>Déposer une vidéo</b><span class="hint">La même leçon peut avoir une vidéo par langue. L'envoi reprend si la connexion coupe.</span><div class="upl-bar"><i id="ub"></i></div><button class="btn btn-ghost btn-small" id="upb">Choisir un fichier</button></div></div>`
+ :`<ul style="margin:12px 0 0;padding-left:18px;color:var(--muted)">${p.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`}
+</details>`).join('')}`);
+AFTER['admin-parcours']=()=>{const b=$('#upb');if(b)b.onclick=()=>{let p=0;b.disabled=true;const t=setInterval(()=>{p+=8;$('#ub').style.width=Math.min(p,100)+'%';if(p>=100){clearInterval(t);b.disabled=false;toast('Vidéo envoyée, encodage en cours')}},110)};
+  document.querySelectorAll('[data-up]').forEach(x=>x.onclick=()=>toast('Dépôt de la vidéo de cette leçon (maquette)'))};
+VIEWS['admin-pays']=()=>shell('admin-pays',`<h2>Territoires et langues</h2>
+<p class="muted">Chaque territoire est une fiche de configuration : on ajoute un pays sans réécrire la plateforme.</p>
+<div class="tbl-wrap" data-db="country_profiles"><table><thead><tr><th>Territoire</th><th>Langues</th><th>Partenaire</th><th>Réglementation</th><th>Monnaie</th><th>Couche pays</th></tr></thead><tbody>
+${Object.entries(COUNTRY).map(([k,c])=>`<tr><td><b>${c.name}</b> <span class="mono muted">${k}</span></td><td>${c.langs.join(', ')}</td><td>${esc(c.org)}</td><td style="white-space:normal;min-width:220px">${esc(c.reg)}</td><td>${c.money}</td><td><span class="pill ${k==='GF'?'ok':'warn'}">${k==='GF'?'Prête':'À rédiger'}</span></td></tr>`).join('')}
+</tbody></table></div>
+<button class="btn btn-primary btn-small" style="justify-self:start" id="ap">Ajouter un territoire</button>
+<p class="hint">La fiche réglementaire se génère depuis MNEMOSYNE ; ETHICS rattache les mesures aux règles des standards.</p>`);
+AFTER['admin-pays']=()=>{$('#ap').onclick=()=>toast('Nouveau territoire : fiche pays + langue (maquette)')};
+VIEWS['admin-evals']=()=>shell('admin-evals',`<h2>Évaluations</h2>
+<div class="tbl-wrap" data-db="quizzes"><table><thead><tr><th>Évaluation</th><th>Questions</th><th>Seuil</th><th>Tentatives</th><th>Réussite</th></tr></thead><tbody>
+<tr><td>Pôle 0 · Socle carbone</td><td class="num">20</td><td class="num">12/20</td><td class="num">64</td><td class="num">86 %</td></tr>
+<tr><td>Pôle 1 · Pyrolyse</td><td class="num">3</td><td class="num">2/3</td><td class="num">31</td><td class="num">74 %</td></tr>
+<tr><td>Pôle 1 · Sécurité ICPE</td><td class="num">10</td><td class="num">8/10</td><td class="num">29</td><td class="num">69 %</td></tr>
+</tbody></table></div>
+<div class="card stack" data-db="quiz_questions (+ variantes par langue)"><h3>Question</h3><input type="text" value="${esc(QUIZ[0].q)}"><div class="stack">${QUIZ[0].o.map((o,j)=>`<label class="row" style="margin:0;font-weight:400"><input type="radio" name="good" ${j===QUIZ[0].a?'checked':''}> <input type="text" value="${o}" style="flex:1"></label>`).join('')}</div><button class="btn btn-primary btn-small" style="justify-self:start" onclick="return false">Enregistrer</button></div>`);
+VIEWS['admin-emargement']=()=>shell('admin-emargement',`<h2>Heures et émargement</h2>
+<p class="muted">Preuve de présence demandée par Qualiopi et les financeurs : heures en ligne (calculées) et heures en salle ou sur site (signées).</p>
+<div class="tbl-wrap" data-db="attendance (session, signature, minutes)"><table><thead><tr><th>Stagiaire</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th><th>En ligne</th><th>Total semaine</th></tr></thead><tbody>
+${TRAINEES.slice(0,4).map((t,i)=>`<tr><td>${t[0]}</td>${[0,1,2,3,4].map(d=>`<td><div class="sign" style="grid-template-columns:1fr 1fr"><span class="${(i+d)%7===3?'n':'y'}" title="Matin"></span><span class="${(i*d)%5===4?'n':'y'}" title="Après-midi"></span></div></td>`).join('')}<td class="num">6 h 20</td><td class="num">${35-(i%2)*3.5} h</td></tr>`).join('')}
+</tbody></table></div>
+<div class="legend"><span><i style="background:var(--ok)"></i>Signé</span><span><i style="background:var(--copper)"></i>Absent</span></div>
+<button class="btn btn-primary btn-small" style="justify-self:start" id="ex">Exporter la feuille d'émargement</button>`);
+AFTER['admin-emargement']=()=>{$('#ex').onclick=()=>toast('Export PDF signé pour le financeur (maquette)')};
+VIEWS['admin-satisfaction']=()=>shell('admin-satisfaction',`<h2>Satisfaction</h2>
+<div class="hours"><div class="stat" data-db="surveys"><b class="num">4,6/5</b><span class="muted">satisfaction à chaud</span></div><div class="stat"><b class="num">92 %</b><span class="muted">recommanderaient</span></div><div class="stat"><b class="num">78 %</b><span class="muted">en emploi à 6 mois</span></div></div>
+<div class="tbl-wrap" data-db="survey_responses"><table><thead><tr><th>Question</th><th>Moyenne</th></tr></thead><tbody>
+<tr><td>Les vidéos m'ont aidé à refaire les gestes sur site</td><td class="num">4,7</td></tr>
+<tr><td>Les exemples locaux étaient adaptés à mon territoire</td><td class="num">4,4</td></tr>
+<tr><td>Le formateur a répondu à mes questions</td><td class="num">4,8</td></tr>
+</tbody></table></div>`);
+
+window.addEventListener('hashchange',render);render();
+})();
+</script>
+
+<script>
+(function(){
+const LN={"Maquette · École REKARBON": "Ndakisa · Eteyelo REKARBON", "Stagiaire": "Moyekoli", "Référent partenaire": "Motambwisi ya moninga-mosala", "REKARBON (back-office)": "REKARBON (biro)", "Territoire": "Etúká", "Territoire : ": "Etúká : ", "Cases prévues en base": "Bisika ya ba données", "Données d'exemple": "Ba données ya ndakisa", "École des métiers du carbone": "Eteyelo ya misala ya karbone", "École REKARBON": "Eteyelo REKARBON", "Back-office": "Biro", "Voir comme stagiaire": "Tala lokola moyekoli", "Déconnexion": "Kobima", "Ma promotion": "Promosio na ngai", "Métiers": "Misala", "Mon parcours": "Nzela na ngai ya boyekoli", "Reprendre": "Kozongela", "Évaluation": "Komekama", "Habilitations": "Ndingisa", "Protocole terrain": "Protocole ya esika ya mosala", "Rôle": "Mokumba", "Former sur place les personnes qui feront tourner les projets carbone.": "Koteya bato ya mboka oyo bakotambwisa misala ya karbone.", "Biochar, sols, ERW, mangroves, biodiversité, MRV.": "Biochar, mabele, ERW, mangroves, biodiversité, MRV.", "Un tronc commun identique partout, une couche pays adaptée à": "Liteya ya moboko ndenge moko bisika nyonso, mpe eteni ya mboka oyo ebongisami mpo na", "Délivrance : ": "Epesami na : ", "Pratique : ": "Mosala ya maboko : ", "Modules courts": "Mateya mokuse", "Parcours technicien": "Nzela ya technicien", "Parcours métier": "Nzela ya mosala", "Élus, agents, agriculteurs, entreprises": "Baponami, basali ya leta, balimi, bakompanyi", "Salariés en poste": "Basali oyo bazali na mosala", "Demandeurs d’emploi, futurs opérateurs": "Bato bazali koluka mosala, ba opérateurs ya lobi", "1 à 5 jours": "Mikolo 1 kino 5", "250 à 300 h": "Ngonga 250 kino 300", "600 h dont 200 h de stage": "Ngonga 600, na kati ngonga 200 ya stage", "J'ai un code": "Nazali na kode", "Déjà inscrit·e": "Nakomisaki kombo kala", "Adresse e-mail": "Adresi ya e-mail", "Code d'accès": "Kode ya kokota", "Langue des cours": "Lokota ya mateya", "Compte d'essai": "Kɔnti ya komeka", ": test@gmail.com, code": ": test@gmail.com, kode", ". Déjà rempli, cliquez pour entrer.": ". Etondisami kala, finá mpo na kokota.", "Recevoir mon lien et entrer": "Kozwa lien na ngai mpe kokota", "Recevoir mon lien de connexion": "Kozwa lien na ngai ya kokota", "Les codes sont remis par l'organisme de formation ou par le partenaire (collectivité, syndicat, coopérative).": "Ba kode epesamaka na ebongiseli ya formation to na moninga-mosala (etúká, sindika, koperativi).", "Ce code n’existe pas. Vérifiez les lettres et les chiffres.": "Kode oyo ezali te. Tala malamu ba lettres mpe ba chiffres.", "Ce code a déjà été utilisé.": "Kode oyo esalelamaki kala.", "Parcours ajouté : ": "Nzela ya boyekoli ebakisami : ", "Lien envoyé (maquette) : ouverture de votre espace": "Lien etindami (ndakisa) : esika na yo ezali kofungwama", "Guyane": "Guyane", "Collectivité Territoriale de Guyane": "Collectivité Territoriale ya Guyane", "Organisme Qualiopi guyanais (à identifier)": "Ebongiseli Qualiopi ya Guyane (ekoyebana)", "Label Bas-Carbone (ouvert aux DROM), CRCF européen, ICPE": "Label Bas-Carbone (efungwami mpo na DROM), CRCF ya Europe, ICPE", "Acacia mangium, sols au mercure (orpaillage), bancs de vase de l’Amazone": "Acacia mangium, mabele na mercure (kotimola wolo), potopoto ya Amazone", "Pilotes Guyane (4 sites)": "Ba pilotes ya Guyane (bisika 4)", "Région Réunion": "Région Réunion", "Organisme Qualiopi réunionnais": "Ebongiseli Qualiopi ya Réunion", "Label Bas-Carbone, CRCF européen, ICPE": "Label Bas-Carbone, CRCF ya Europe, ICPE", "Déchets verts, sols volcaniques, site pilote de La Crête": "Bosoto ya matiti, mabele ya volcan, esika pilote ya La Crête", "Site pilote La Crête (55 ha)": "Esika pilote La Crête (55 ha)", "Côte d’Ivoire": "Côte d’Ivoire", "Syndicats cacao et café (Man)": "Ba sindika ya cacao mpe café (Man)", "Partenaire opérationnel local": "Moninga-mosala ya mboka", "Article 6, cadre national carbone, standards Verra / Gold Standard": "Article 6, mibeko ya ekolo mpo na karbone, ba standards Verra / Gold Standard", "Coques de cacao, pulpe de café, organisation en coopératives": "Mposo ya cacao, mosuni ya café, bosangani na ba koperativi", "Coopératives de la région de Man": "Ba koperativi ya etúká ya Man", "Partenaires de Ben Tre": "Baninga-mosala ya Ben Tre", "Partenaire local": "Moninga-mosala ya mboka", "Article 6, réglementation vietnamienne du marché carbone": "Article 6, mibeko ya Vietnam mpo na zando ya karbone", "Coques de noix de coco, rizières, delta du Mékong": "Mposo ya koko, bilanga ya loso, delta ya Mékong", "Indonésie": "Indonésie", "Syndicat cacao indonésien": "Sindika ya cacao ya Indonésie", "Article 6, SRN PPI (registre national)": "Article 6, SRN PPI (buku ya ekolo)", "Cabosses de cacao, tourbières, mangroves": "Mposo ya cacao, mabele ya tourbe, mangroves", "Coopératives cacao": "Ba koperativi ya cacao", "Partenaires de Pointe-Noire": "Baninga-mosala ya Pointe-Noire", "Résidus de scieries, déchets verts, mangroves du littoral": "Ba chutes ya ba scieries, bosoto ya matiti, mangroves ya libongo", "Pointe-Noire, ateliers et scieries partenaires": "Pointe-Noire, ba ateliers mpe ba scieries baninga", "Partenaires locaux en RDC": "Baninga-mosala ya mboka na RDC", "Résidus agricoles, forêts du bassin du Congo, savanes dégradées": "Ba résidus ya bilanga, zamba ya bassin ya Congo, savanes ebebisami", "Pilotes RDC (à définir)": "Ba pilotes ya RDC (ekoyebana)", "Socle : comprendre le marché du carbone": "Moboko : koyeba zando ya karbone", "Crédits d’évitement et crédits de retrait": "Ba crédits ya kopekisa mpe ba crédits ya kolongola", "Marchés volontaire et réglementé, Article 6": "Zando ya bolingi mpe zando ya mibeko, Article 6", "Standards : Puro.earth, Verra, Gold Standard, Isometric": "Ba standards : Puro.earth, Verra, Gold Standard, Isometric", "Prix, acheteurs et contrats d’achat": "Ntalo, basombi mpe bikanganeli ya kosomba", "Partage des revenus et fonds territorial": "Bokaboli ya mbongo mpe fonds ya etúká", "Biochar : production et Wood Vault": "Biochar : kosala yango mpe Wood Vault", "Gisements et logistique": "Biloko ya ebandeli mpe kotambwisa yango", "Séchage et rendement": "Kokawusa mpe mbuma", "Pyrolyse : four 4 m³, Kon-Tiki, ligne industrielle": "Pyrolyse : four ya 4 m³, Kon-Tiki, ligne ya izine", "Qualité, analyses et traçabilité des lots": "Bolamu, ba analyses mpe bolandi ya ba lots", "Usages : sol, béton, asphalte": "Bosaleli : mabele, béton, goudron", "ICPE, incendie, EPI": "ICPE, moto, bilamba ya bobateli", "Restauration des sols": "Kobongisa mabele", "Diagnostic des sols": "Botali ya mabele", "Apport de biochar": "Kobakisa biochar", "Sols pollués et phytoextraction": "Mabele ebebisami mpe phytoextraction", "Biologie des sols, bokashi": "Bomoi ya mabele, bokashi", "Reboisement et pépinières": "Kolona banzete mpe bilanga ya mbuma", "Mesure du carbone du sol": "Komeka karbone ya mabele", "ERW : altération forcée des roches": "ERW : kopanza mabanga ya kolemba", "Principe et intérêt en climat chaud": "Ndenge esalaka mpe litomba na mokili ya moto", "Choix de la roche, granulométrie, doses": "Kopona libanga, bonene ya mputulu, ba doses", "Couplage biochar + ERW": "Kosangisa biochar + ERW", "Mesure : sol, eau, cations": "Komeka : mabele, mai, cations", "Mangroves": "Mangroves", "Écosystème mangrove": "Bomoi ya mangrove", "Restauration et suivi de la reprise": "Kobongisa mpe kolanda bokoli", "Méthode Label Bas-Carbone mangroves": "Méthode Label Bas-Carbone ya mangroves", "Protection du littoral, biochar marin": "Kobatela libongo, biochar ya mbu", "Biodiversité": "Biodiversité", "Protocoles de terrain et indicateurs": "Ba protocoles ya esika mpe bilembo", "Capteurs acoustiques, pièges photo": "Ba capteurs ya mongongo, ba caméras ya motambo", "Crédits biodiversité, SNCRR": "Ba crédits ya biodiversité, SNCRR", "Espèces invasives": "Ba espèces oyo ezali kopanzana", "MRV et données": "MRV mpe ba données", "Mesure d’abord, crédits ensuite": "Komeka liboso, ba crédits sima", "Capteurs et unité edge": "Ba capteurs mpe unité edge", "Signature et traçabilité, RDUE": "Signature mpe bolandi, RDUE", "Préparer un audit de certification": "Kobongisa audit ya certification", "Transverse": "Mateya ya nyonso", "Sécurité au travail, ICPE": "Bobateli na mosala, ICPE", "Outils numériques de terrain": "Bisaleli ya numérique ya esika", "Créer son activité dans le carbone": "Kofungola mosala na yo ya karbone", "Mer et carbone bleu": "Mbu mpe karbone ya bleu", "Herbiers et sédiments marins": "Matiti ya mbu mpe potopoto ya mbu", "Collecte et traitement des sargasses": "Kolokota mpe kosala ba sargasses", "Acoustique sous-marine": "Mongongo na se ya mai", "Suivi par drone du littoral": "Kolanda libongo na drone", "Comptabilité carbone et RSE": "Kotanga karbone mpe RSE", "Bilan des émissions de gaz à effet de serre": "Bilan ya milinga oyo ezali kobebisa klima", "Reporting CSRD, analyse de cycle de vie": "Reporting CSRD, analyse ya bomoi ya eloko", "Conformité RDUE": "Kotosa RDUE", "Stratégie climat et achat de crédits": "Stratégie ya klima mpe kosomba ba crédits", "Terre : agriculture et sols": "Mabele : bilanga mpe mabele", "Forêt et biodiversité": "Zamba mpe biodiversité", "Mer et littoral": "Mbu mpe libongo", "Industrie : biochar": "Izine : biochar", "Mesure, MRV et données": "Komeka, MRV mpe ba données", "Marché et finance": "Zando mpe mbongo", "Entreprise et RSE": "Kompanyi mpe RSE", "Territoire et public": "Etúká mpe leta", "Opérateur": "Opérateur", "Technicien": "Technicien", "Ingénieur / chargé de projet": "Ingénieur / motambwisi ya projet", "Responsable / expert": "Mokonzi / moyebi", "opérateurs": "ba opérateurs", "techniciens": "ba techniciens", "ingénieur / chargé de projets": "ba ingénieurs / batambwisi ya projet", "responsable / experts": "bakonzi / bayebi", "Module court": "Liteya mokuse", "Parcours métier 600 h": "Nzela ya mosala ngonga 600", "Formation continue": "Formation ya ntango nyonso", "Agent d’épandage biochar et roches (ERW)": "Mosali ya kopanza biochar mpe mabanga (ERW)", "Préleveur d’échantillons de sol": "Mozwi ya ba échantillons ya mabele", "Technicien sols et carbone du sol": "Technicien ya mabele mpe karbone ya mabele", "Conseiller agronome carbone": "Mopesi toli ya bilanga mpe karbone", "Animateur de coopérative ou de syndicat carbone": "Motambwisi ya koperativi to sindika ya karbone", "Technicien dépollution des sols": "Technicien ya kopetola mabele", "Chef de projet Label Bas-Carbone agricole": "Mokonzi ya projet Label Bas-Carbone ya bilanga", "Ouvrier de reboisement et pépiniériste": "Mosali ya kolona banzete mpe pépinière", "Agent de lutte contre les espèces invasives": "Mosali ya kobunda na ba espèces oyo ezali kopanzana", "Technicien d’inventaire forestier carbone": "Technicien ya kotanga karbone ya zamba", "Technicien biodiversité": "Technicien ya biodiversité", "Écologue de projet": "Écologue ya projet", "Gestionnaire de site de compensation (SNCRR)": "Motambwisi ya esika ya compensation (SNCRR)", "Analyste télédétection (satellite, drone)": "Motali ya bilili ya satellite mpe drone", "Agent de restauration de mangroves": "Mosali ya kobongisa mangroves", "Opérateur de collecte de sargasses": "Opérateur ya kolokota ba sargasses", "Technicien suivi mangroves et herbiers": "Technicien ya kolanda mangroves mpe matiti ya mbu", "Plongeur scientifique": "Mozindi ya siansi", "Technicien acoustique sous-marine": "Technicien ya mongongo na se ya mai", "Télépilote de drone littoral": "Motambwisi ya drone ya libongo", "Chargé de projet carbone bleu": "Motambwisi ya projet ya karbone ya bleu", "Opérateur de pyrolyse": "Opérateur ya pyrolyse", "Agent de collecte et préparation de biomasse": "Mosali ya kolokota mpe kobongisa biomasse", "Opérateur Wood Vault": "Opérateur ya Wood Vault", "Conducteur de ligne biochar": "Motambwisi ya ligne ya biochar", "Technicien de maintenance": "Technicien ya kobongisa ba machines", "Technicien qualité et laboratoire": "Technicien ya bolamu mpe laboratoire", "Logisticien biomasse et gisements": "Motambwisi ya biomasse mpe ba gisements", "Ingénieur procédés pyrolyse": "Ingénieur ya ba procédés ya pyrolyse", "Formulateur matériaux biochar (béton, asphalte)": "Mosali ya biloko na biochar (béton, goudron)", "Responsable HSE et ICPE": "Mokonzi ya HSE mpe ICPE", "Technicien capteurs et unité edge": "Technicien ya ba capteurs mpe unité edge", "Technicien MRV terrain": "Technicien ya MRV na esika", "Géomaticien SIG": "Géomaticien SIG", "Analyste de données carbone": "Motali ya ba données ya karbone", "Ingénieur MRV": "Ingénieur ya MRV", "Développeur de plateformes MRV": "Mosali ya ba plateformes MRV", "Auditeur ou vérificateur": "Auditeur to motali", "Développeur de projets carbone": "Mobongisi ya ba projets ya karbone", "Chargé de relations communautés et partage des revenus": "Motambwisi ya boyokani na bato ya mboka mpe bokaboli ya mbongo", "Originateur ou négociant de crédits": "Moteki to mosombi ya ba crédits", "Analyste qualité des crédits": "Motali ya bolamu ya ba crédits", "Juriste carbone (Article 6, contrats)": "Moyebi mibeko ya karbone (Article 6, bikanganeli)", "Gestionnaire de fonds carbone": "Motambwisi ya fonds ya karbone", "Référent climat en entreprise": "Motambwisi ya klima na kompanyi", "Consultant bilan carbone": "Mopesi toli ya bilan karbone", "Chargé de reporting CSRD": "Motambwisi ya reporting CSRD", "Analyste cycle de vie (ACV)": "Motali ya bomoi ya eloko (ACV)", "Chargé de conformité RDUE": "Motambwisi ya kotosa RDUE", "Acheteur responsable": "Mosombi ya bokebi", "Responsable RSE": "Mokonzi ya RSE", "Responsable stratégie climat": "Mokonzi ya stratégie ya klima", "Élu ou agent formé au marché du carbone": "Moponami to mosali ya leta oyo ayekoli zando ya karbone", "Animateur territorial carbone": "Motambwisi ya karbone na etúká", "Chargé de mission transition écologique": "Motambwisi ya mbongwana ya écologie", "Instructeur de projets (ICPE, environnement)": "Motali ya ba projets (ICPE, zingazinga)", "Formateur aux métiers du carbone": "Moteyi ya misala ya karbone", "Référentiel des métiers du carbone": "Liste ya misala ya karbone", "Chaque métier est un assemblage de pôles. La plateforme en fait un parcours, avec une attestation au nom du métier. Le parcours 600 h vise d'abord les opérateurs et techniciens de terrain ; les profils ingénieurs et cadres passent par des modules de formation continue.": "Mosala moko na moko esalemi na biteni ebele. Plateforme ekomisaka yango nzela ya boyekoli, na attestation na kombo ya mosala. Nzela ya ngonga 600 ezali liboso mpo na ba opérateurs mpe ba techniciens ya esika ; ba ingénieurs mpe bakonzi bayekolaka na mateya ya formation ya ntango nyonso.", "créés sur place par les pilotes": "ekelami na esika na ba pilotes", "Quels pôles forment quels domaines": "Biteni nini eteyaka bitando nini", "Nombre de métiers du domaine qui passent par le pôle": "Motango ya misala ya etando oyo elekaka na eteni", "Domaine": "Etando", "Domaines": "Bitando", "* Pôles proposés : 8 « Mer et carbone bleu », 9 « Comptabilité carbone et RSE ».": "* Biteni oyo bapesi likanisi : 8 « Mbu mpe karbone ya bleu », 9 « Kotanga karbone mpe RSE ».", "Chercher un métier": "Koluka mosala", "Ex. : pyrolyse, mangrove, CSRD": "Ndakisa : pyrolyse, mangrove, CSRD", "Niveau": "Nivó", "Format": "Lolenge", "Tous": "Nyonso", "Emplois créés par les pilotes": "Misala oyo ba pilotes bakeli", "Tous les domaines": "Bitando nyonso", "Emploi pilote": "Mosala ya pilote", "Voir le parcours": "Tala nzela ya boyekoli", "S'inscrire à ce parcours": "Komikomisa na nzela oyo", "Fermer": "Kokanga", "Aucun métier ne correspond à ces filtres.": "Mosala moko te ekokani na maponi oyo.", "Demande d’inscription envoyée (maquette)": "Losenge ya komikomisa etindami (ndakisa)", "Bonjour Test": "Mbote Test", "Parcours métier 600 h : 400 h de cours et ateliers, 200 h de stage.": "Nzela ya mosala ngonga 600 : ngonga 400 ya mateya mpe ba ateliers, ngonga 200 ya stage.", "réalisées sur 600 h": "esalemi na ngonga 600", "des cours vus": "ya mateya oyo otali", "moyenne aux évaluations": "moyenne na ba komekama", "stage, dès mai 2027": "stage, kobanda mai 2027", "Les 400 h de cours par pôle": "Ngonga 400 ya mateya na eteni moko na moko", "Nouveau · formation continue": "Ya sika · formation ya ntango nyonso", "Continuer": "Kokoba", "Voir l’attestation": "Tala attestation", "Ouvrir": "Kofungola", "Gisements et contexte local :": "Ba gisements mpe makambo ya mboka :", "Identifier les gisements locaux": "Koyeba ba gisements ya mboka", "Collecte et stockage": "Kolokota mpe kobomba", "Séchage": "Kokawusa", "Humidité et matière sèche": "Mai na kati mpe eloko ekauki", "Calculer le rendement (~29 %)": "Kotanga mbuma (~29 %)", "Pyrolyse": "Pyrolyse", "Le four 4 m³ à post-combustion": "Four ya 4 m³ na post-combustion", "Conduite d’une fournée": "Kotambwisa fournée moko", "Kon-Tiki : démonstration terrain": "Kon-Tiki : kolakisa na esika", "Températures et sécurité": "Moto mpe bobateli", "Qualité et traçabilité": "Bolamu mpe bolandi", "Carbone fixe et rapport H/C": "Karbone ya ngwi mpe rapport H/C", "Prélever un lot sous 7 jours": "Kozwa échantillon ya lot na kati ya mikolo 7", "Réglementation": "Mibeko", "ICPE et sécurité incendie": "ICPE mpe bobateli na moto", "EPI et consignes": "Bilamba ya bobateli mpe malako", "Préparer la fournée": "Kobongisa fournée", "Allumage": "Kopelisa moto", "Montée en température": "Komata ya moto", "Erreur fréquente": "Libunga oyo ebimaka mingi", "Extinction et refroidissement": "Kozimisa mpe kotiya malili", "On vérifie l’humidité du lot avant de charger : moins de 20 %.": "Totalaka mai na kati ya lot liboso ya kotondisa : na se ya 20 %.", "L’allumage se fait par le haut, couvercle ouvert.": "Moto epelisamaka na likolo, ezipeli efungwami.", "On surveille la température : entre 450 et 650 °C.": "Tozali kolanda moto : kati ya 450 na 650 °C.", "Ici, la fumée est trop blanche : la biomasse est encore humide.": "Awa, milinga ezali pembe mingi : biomasse ezali naino na mai.", "On éteint à l’eau puis on laisse refroidir avant d’ouvrir.": "Tozimisaka na mai, sima totikaka ekola malili liboso ya kofungola.", "Répétition A → B": "Kozongela A → B", "Lecture": "Kobanda", "Répéter un passage": "Kozongela eteni", "Arrêter la répétition": "Kotelemisa kozongela", "Vitesse": "Lombangu", "Langue audio": "Lokota ya mongongo", "Son": "Mongongo", "Son coupé": "Mongongo ekatami", "Volume": "Makasi ya mongongo", "Sous-titres": "Makomi na se", "Qualité": "Bolamu", "Qualité : ": "Bolamu : ", "360p (réseau faible)": "360p (réseau ya bolembu)", "Télécharger hors ligne": "Kokitisa mpo na sans réseau", "Plein écran": "Ekrani mobimba", "Plein écran indisponible ici": "Ekrani mobimba ezali awa te", "Position": "Esika", "Marquer comme vue": "Kotya ete otali", "Leçon suivante": "Liteya oyo elandi", "Leçon vue, ": "Liteya etalami, ", " min ajoutées à vos heures": " minuti ebakisami na ngonga na yo", "Leçon remise à voir": "Liteya ezongisami mpo na kotala", "Le cours": "Liteya", "Fiche protocole": "Mokanda ya protocole", "Mes notes": "Makomi na ngai", "Questions au formateur": "Mituna epai ya moteyi", "Ex. : humidité < 20 % avant chargement": "Ndakisa : mai < 20 % liboso ya kotondisa", "Visibles par vous seul·e. Enregistrées automatiquement.": "Bato mosusu bakomona te. Ebombamaka yango moko.", "Stagiaire exemple 2": "Moyekoli ndakisa 2", "hier": "lobi eleki", "La fumée reste blanche après 20 minutes, c'est normal ?": "Milinga etikali pembe sima ya minuti 20, ezali malamu ?", "Formateur :": "Moteyi :", "non, le lot est trop humide. Arrêtez et refaites un contrôle d'humidité.": "te, lot ezali na mai mingi. Telema mpe mekisa lisusu mai na kati.", "Poser une question": "Kotuna motuna", "Envoyer": "Kotinda", "Question envoyée au formateur": "Motuna etindami epai ya moteyi", "Cette leçon montre": "Liteya oyo elakisi", "sur le four 4 m³ à post-combustion, avec les gestes de sécurité et les erreurs fréquentes.": "na four ya 4 m³ na post-combustion, na makambo ya bobateli mpe mabunga oyo ebimaka mingi.", "Vidéo gardée sur le téléphone pour le terrain sans réseau": "Vidéo ebombami na telefone mpo na esika oyo réseau ezali te", "Pôles et leçons": "Biteni mpe mateya", "Dans la vraie version, la fiche s’ouvre ici": "Na version ya solo, mokanda ekofungwama awa", "Début marqué. Avancez puis cliquez à nouveau.": "Ebandeli etiyami. Kende liboso mpe finá lisusu.", "Le passage se répète": "Eteni ezali kozongela", "Répétition arrêtée": "Kozongela etelemi", "Fin du passage ?": "Nsuka ya eteni ?", "Vidéo": "Vidéo", "Vérifiez vos acquis": "Tala soki oyekoli malamu", "3 questions. Il faut 2 bonnes réponses pour valider le module. Les tentatives sont gardées pour le suivi Qualiopi.": "Mituna 3. Esengeli biyano 2 ya malamu mpo na kolonga liteya. Ba komekama ebombamaka mpo na bolandi ya Qualiopi.", "Quel taux d’humidité maximal vise-t-on avant de charger le four ?": "Mai boni na kati esengeli koleka te liboso ya kotondisa four ?", "Sous quel délai faut-il prélever l’échantillon d’un lot pour l’analyse ?": "Na kati ya ntango boni esengeli kozwa échantillon ya lot mpo na analyse ?", "Quel indicateur montre la stabilité du biochar ?": "Elembo nini elakisaka ete biochar ezali ngwi ?", "24 heures": "Ngonga 24", "7 jours": "Mikolo 7", "30 jours": "Mikolo 30", "À la vente": "Na ntango ya koteka", "La couleur": "Langi", "Le rapport H/C": "Rapport H/C", "Le poids du sac": "Kilo ya saki", "Le prix de vente": "Ntalo ya koteka", "Valider mes réponses": "Kondimisa biyano na ngai", "Pôle 1 · Module Pyrolyse · Évaluation": "Eteni 1 · Liteya ya Pyrolyse · Komekama", "Évaluation du module": "Komekama ya liteya", "Attestation de fin de formation": "Attestation ya nsuka ya formation", "Délivrée à": "Epesami na", "Télécharger le PDF": "Kokitisa PDF", "Lien de vérification": "Lien ya kotala solo", "Un employeur vérifie l’attestation avec son numéro": "Mopesi mosala akoki kotala attestation na nimero na yango", "Dans la vraie version, le PDF signé se télécharge ici": "Na version ya solo, PDF oyo etiyami signature ekokita awa", "Ce que vous avez le droit de faire sur site": "Makambo oyo ozali na ndingisa ya kosala na esika", "Une attestation dit que vous avez suivi la formation. Une habilitation dit que vous pouvez faire le geste sur un site REKARBON. Sans habilitation valide, la plateforme refuse vos saisies : c'est ce qui garantit à l'acheteur de crédits que chaque mesure vient d'une personne formée et vérifiée.": "Attestation elakisi ete olandaki formation. Ndingisa elakisi ete okoki kosala mosala yango na esika ya REKARBON. Soki ndingisa ezali te, plateforme eboyaka makomi na yo : yango nde endimisaka mosombi ya ba crédits ete komeka nyonso euti na moto oyo ayekoli mpe atalami.", "Habilitation": "Ndingisa", "Valide": "Ezali malamu", "En cours": "Ezali kosalema", "Non commencée": "Ebandi naino te", "Conditions": "Masengami", "Pratique supervisée :": "Mosala ya maboko na bolandi :", "Renouvellement : chaque habilitation expire au bout d'un an. Elle se renouvelle avec une évaluation courte et une vérification sur site par le formateur relais.": "Kozongisa sika : ndingisa nyonso esilaka sima ya mobu moko. Ezongisamaka sika na komekama mokuse mpe botali na esika na moteyi relais.", "Conduite du four 4 m³": "Kotambwisa four ya 4 m³", "Prélèvement et traçabilité d’un lot": "Kozwa échantillon mpe bolandi ya lot", "Installation de capteurs et unité edge": "Kotiya ba capteurs mpe unité edge", "5 fournées supervisées": "Ba fournées 5 na bolandi", "3 prélèvements supervisés": "Ba échantillons 3 na bolandi", "2 installations supervisées": "Ba installations 2 na bolandi", "Évaluation sécurité ICPE ≥ 8/10": "Komekama ya bobateli ICPE ≥ 8/10", "Formation électrique de base": "Formation ya kura ya moboko", "Fournée du jour": "Fournée ya lelo", "Toutes les étapes du protocole sont obligatoires, dans l'ordre, avec une preuve horodatée.": "Ba étapes nyonso ya protocole ezali na ntina, na molongo, na litatoli oyo ezali na ngonga.", "Démonstration : qui saisit ?": "Ndakisa : nani azali kokoma ?", "Opérateur habilité": "Opérateur na ndingisa", "Personne non habilitée": "Moto oyo azali na ndingisa te", "Identifier le lot": "Koyeba lot", "Scanner l’étiquette du big bag ou saisir le numéro": "Kotanga étiquette ya big bag to kokoma nimero", "Mesurer l’humidité": "Komeka mai na kati", "Humidimètre sur 3 points, moyenne < 20 %": "Humidimètre na bisika 3, moyenne < 20 %", "Photographier le chargement": "Kozwa foto ya chargement", "Photo horodatée et géolocalisée par l’application": "Foto na ngonga mpe esika oyo application etiyaka", "Relever la température max.": "Kokoma moto ya likolo koleka", "Lue sur le thermocouple du four (450 à 650 °C)": "Etangami na thermocouple ya four (450 kino 650 °C)", "Peser le biochar produit": "Kozwa kilo ya biochar oyo esalemi", "Balance étalonnée, poids net": "Balance ebongisami, kilo ya solo", "Prélever l’échantillon": "Kozwa échantillon", "Sachet scellé, numéro reporté, envoi sous 7 jours": "Saki ekangami, nimero ekomami, kotinda na kati ya mikolo 7", "Signer la fournée": "Kotiya signature na fournée", "Signature de l’opérateur habilité": "Signature ya opérateur na ndingisa", "Prendre la photo": "Kozwa foto", "Signer": "Kotiya signature", "Saisir": "Kokoma", "Fait": "Esalemi", "Valider et envoyer au registre MRV": "Kondimisa mpe kotinda na buku ya MRV", "Ce qui part vers l'acheteur de crédits": "Oyo ekokende epai ya mosombi ya ba crédits", "En attente : ": "Ezali kozela : ", " étape(s) à faire.": " étape(s) oyo etikali.", "Fournée conforme envoyée au registre MRV": "Fournée ya malamu etindami na buku ya MRV", "Saisie bloquée : cette personne n’a pas l’habilitation « Conduite du four 4 m³ ». Elle doit terminer sa formation et ses fournées supervisées.": "Kokoma epekisami : moto oyo azali na ndingisa « Kotambwisa four ya 4 m³ » te. Asengeli kosilisa formation na ye mpe ba fournées na bolandi.", "Chaque étape est obligatoire. Le bouton d'envoi ne s'active que lorsque tout est fait par une personne habilitée.": "Étape nyonso ezali na ntina. Bouton ya kotinda efungwamaka kaka soki nyonso esalemi na moto oyo azali na ndingisa.", "Chaque fournée est signée numériquement : la donnée ne peut plus être modifiée après envoi.": "Fournée nyonso etiyamaka signature ya numérique : donnée ekoki kobongwana lisusu te sima ya kotinda.", "Chaque fournée envoyée porte le nom de l'opérateur, son numéro d'habilitation, les preuves de chaque étape et une signature numérique. Une fournée incomplète ne génère aucun crédit.": "Fournée nyonso oyo etindami ezali na kombo ya opérateur, nimero ya ndingisa na ye, matatoli ya étape nyonso mpe signature ya numérique. Fournée oyo ekoki te ebotaka crédit ata moko te.", "Ouvrir le protocole terrain": "Kofungola protocole ya esika", "Étape": "Étape", "Étapes": "Ba étapes", "Langue": "Lokota", "Langues": "Nkota", "Français": "Lifalansé", "Partenaire": "Moninga-mosala", "Partenaire :": "Moninga-mosala :", "Promotion": "Promosio", "Stagiaires": "Bayekoli", "Présence": "Kozala", "Heures": "Ngonga", "Évaluations": "Ba komekama", "Statut": "Ezalela", "Action": "Likambo ya kosala", "Code": "Kode", "Durée": "Ntango", "État": "Ezalela", "Activé": "Efungwami", "Disponible": "Ezali", "Activé par": "Efungwami na", "Essai": "Komeka", "En attente": "Ezali kozela", "Analysé": "Etalami", "Prélevé": "Ezwami", "Déchets verts": "Bosoto ya matiti", "Connexes de scierie": "Ba chutes ya scierie", "À voir": "Kotala", "À venir": "Ekoya", "Télécharger": "Kokitisa", "Enregistrer": "Kobomba", "Matin": "Ntongo", "Après-midi": "Nzanga", "Lun": "Mok", "Mar": "Mib", "Jeu": "Min", "Ven": "Mit", "Moyenne": "Moyenne", "Satisfaction": "Esengo", "Seuil": "Ndelo", "Objectif": "Mokano", "Total semaine": "Nyonso ya poso", "Tableau de bord": "Tableau ya bolandi", "Suivi de vos stagiaires": "Bolandi ya bayekoli na yo", "Vous voyez uniquement les personnes de votre organisation : heures, présence, résultats.": "Ozali komona kaka bato ya ebongiseli na yo : ngonga, kozala, mbano.", "Heures et émargement": "Ngonga mpe kotiya signature", "Preuve de présence demandée par Qualiopi et les financeurs : heures en ligne (calculées) et heures en salle ou sur site (signées).": "Litatoli ya kozala oyo Qualiopi mpe bapesi mbongo basengaka : ngonga na internet (etangami) mpe ngonga na kelasi to na esika (signature).", "Exporter la feuille d'émargement": "Kobimisa mokanda ya kotiya signature", "Exporter pour le financeur": "Kobimisa mpo na mopesi mbongo", "Distribuer des codes": "Kokabola ba kode", "Données du pilote": "Ba données ya pilote", "Lot": "Lot", "Biomasse": "Biomasse", "T° max": "T° likolo", "Analyse": "Analyse", "Référent du pôle : chef opérationnel pyrolyse (20 ans d'expérience) et ingénieur chimiste.": "Motambwisi ya eteni : mokonzi ya pyrolyse (mibu 20 ya mayele) mpe ingénieur ya chimie.", "Habilitation métier depuis 6 mois": "Ndingisa ya mosala banda sanza 6", "Module « former à son tour » (14 h)": "Liteya « koteya bato mosusu » (ngonga 14)", "Une session co-animée avec REKARBON": "Session moko oyo etambwisami elongo na REKARBON", "Comprendre le marché du carbone": "Koyeba zando ya karbone", "évaluation finale": "komekama ya nsuka", "présence émargée": "kozala na signature", "Chef d’équipe production": "Mokonzi ya ekipi ya production", "Tronc commun": "Moboko ya nyonso", "Socle carbone": "Moboko ya karbone", "Sécurité ICPE": "Bobateli ICPE", "identifier les gisements locaux": "koyeba ba gisements ya mboka", "collecte et stockage": "kolokota mpe kobomba", "humidité et matière sèche": "mai na kati mpe eloko ekauki", "calculer le rendement (~29 %)": "kotanga mbuma (~29 %)", "le four 4 m³ à post-combustion": "four ya 4 m³ na post-combustion", "conduite d’une fournée": "kotambwisa fournée moko", "kon-tiki : démonstration terrain": "kon-Tiki : kolakisa na esika", "températures et sécurité": "moto mpe bobateli", "carbone fixe et rapport h/c": "karbone ya ngwi mpe rapport H/C", "prélever un lot sous 7 jours": "kozwa échantillon ya lot na kati ya mikolo 7", "icpe et sécurité incendie": "iCPE mpe bobateli na moto", "epi et consignes": "bilamba ya bobateli mpe malako", "de formation": "ya formation", "de formation réalisées": "ya formation esalemi", "stagiaires": "bayekoli", "habilités": "na ndingisa", "unités": "ba unités"};
+const RX=[
+ [/^Promotion (.+) (\d{4})/,'Promosio $1 $2'],
+ [/Découvrir les (\d+) métiers formés/,'Koyeba misala $1 oyo eteyamaka'],
+ [/^(\d+) métiers, (\d+) domaines, (\d+) pôles$/,'Misala $1, bitando $2, biteni $3'],
+ [/^Reprendre : /,'Kozongela : '],
+ [/^Couche (.+?) : /,'Eteni ya mboka ($1) : '],
+ [/^Total (\d+) h$/,'Nyonso $1 h'],
+ [/^(\d+) h de pôles$/,'$1 h ya biteni'],
+ [/PÔLE (\d+)/g,'ETENI $1'],
+ [/^Pôle (\d+)/,'Eteni $1'],
+ [/», délivrée par /,'», epesami na '],
+ [/^(\d+) \/ (\d+) leçons$/,'$1 / $2 mateya'],
+ [/^Territoire : /,'Etúká : '],
+ [/Pratique : /,'Mosala ya maboko : '],
+ [/(\d+)\/3 : module validé\./,'$1/3 : liteya elongami.'],
+ [/(\d+)\/3 : pas encore\./,'$1/3 : naino te.'],
+ [/^Parcours ajouté : /,'Nzela ya boyekoli ebakisami : '],
+ [/Français \/ Lingála/,'Lifalansé / Lingála'],
+ [/sous-titres/g,'makomi na se'],
+ [/^Au (.+)$/,'Na $1'],
+ [/^Tronc commun/,'Moboko ya nyonso'],
+ [/pour le suivi complet du module, en Français, territoire/,'mpo na kolanda liteya mobimba, na Lifalansé, etúká'],[/pour le suivi complet du module, en (.+?), territoire/,'mpo na kolanda liteya mobimba, na $1, etúká'],
+ [/Organisme : /,'Ebongiseli : '],[/Contenus : /,'Makambo : '],[/N° de vérification/,'Nimero ya botali'],
+ [/module (\S+) validé/,'liteya $1 elongami'],[/ validé$/,' elongami']
+];
+const KEYS=Object.keys(LN).filter(k=>k.length>=12).sort((a,b)=>b.length-a.length);
+let lang='fr';try{lang=localStorage.getItem('rkb-lang')||'fr'}catch(_){}
+const ORIG=new WeakMap();
+function tr(s){
+  const t=s.trim();if(!t)return s;
+  if(Object.prototype.hasOwnProperty.call(LN,t))return s.replace(t,LN[t]);
+  if(t.indexOf(' · ')>-1){const parts=t.split(' · ');if(parts.some(p=>Object.prototype.hasOwnProperty.call(LN,p)))return s.replace(t,parts.map(p=>Object.prototype.hasOwnProperty.call(LN,p)?LN[p]:tr(p)).join(' · '))}
+  let o=s;for(const k of KEYS){if(o.indexOf(k)>-1)o=o.split(k).join(LN[k])}
+  for(const [r,v] of RX)o=o.replace(r,v);
+  return o;
+}
+const ATTRS=['placeholder','aria-label','title'];
+function apply(root){
+  if(!root)return;
+  if(root.nodeType===3){fix(root);return}
+  if(root.nodeType!==1)return;
+  if(root.tagName==='SCRIPT'||root.tagName==='STYLE')return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>{const p=n.parentNode&&n.parentNode.nodeName;return p==='SCRIPT'||p==='STYLE'?2:1}});
+  let n;while((n=w.nextNode())){if(n.parentNode&&n.parentNode.closest&&n.parentNode.closest('#langSeg'))continue;fix(n)}
+  const els=[root,...root.querySelectorAll('*')];
+  for(const el of els)for(const a of ATTRS){if(!el.hasAttribute||!el.hasAttribute(a))continue;const key='data-fr-'+a;if(!el.hasAttribute(key))el.setAttribute(key,el.getAttribute(a));const fr=el.getAttribute(key);el.setAttribute(a,lang==='ln'?tr(fr):fr)}
+}
+function fix(n){
+  if(!ORIG.has(n))ORIG.set(n,n.nodeValue);
+  const fr=ORIG.get(n);const v=lang==='ln'?tr(fr):fr;
+  if(n.nodeValue!==v)n.nodeValue=v;
+}
+new MutationObserver(ms=>{for(const m of ms)m.addedNodes.forEach(apply)}).observe(document.body,{childList:true,subtree:true});
+function setLang(l,user){
+  lang=l;try{localStorage.setItem('rkb-lang',l)}catch(_){}
+  document.documentElement.lang=l==='ln'?'ln':'fr';
+  document.querySelectorAll('#langSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===l));
+  const sel=document.getElementById('country');
+  if(user&&l==='ln'&&sel&&sel.value!=='CG'&&sel.value!=='CD'){sel.value='CG';sel.dispatchEvent(new Event('change'))}
+  apply(document.body);
+}
+document.querySelectorAll('#langSeg button').forEach(b=>b.onclick=()=>setLang(b.dataset.lang,true));
+setLang(lang,false);
+})();
+</script>
+</body></html>
